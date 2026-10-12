@@ -9,12 +9,10 @@ import {
   initAuth, 
   googleSignIn, 
   logout, 
-  getAccessToken,
   setAccessTokenManually 
 } from './services/auth';
 import { 
-  StorageService, 
-  INITIAL_CONFIG 
+  StorageService 
 } from './services/storageService';
 import { SheetsService } from './services/sheetsService';
 import { 
@@ -27,19 +25,29 @@ import {
   CustomField, 
   HabitItem 
 } from './types';
-import { Navbar } from './components/Navbar';
+import { Navbar, AppViewMode } from './components/Navbar';
 import { DesktopStudio } from './components/DesktopStudio';
 import { MobileView } from './components/MobileView';
 import { MonthlyReportView } from './components/MonthlyReportView';
 import { SpreadsheetModal } from './components/SpreadsheetModal';
 import { DestructiveConfirmModal } from './components/DestructiveConfirmModal';
-import { Smartphone, RefreshCw, CheckCircle2, AlertCircle, ExternalLink } from 'lucide-react';
+import { Smartphone, Eye, EyeOff } from 'lucide-react';
 
 export default function App() {
   const [user, setUser] = useState<User | null>(null);
   const [accessToken, setAccessToken] = useState<string | null>(null);
   const [isLoggingIn, setIsLoggingIn] = useState(false);
-  const [currentView, setCurrentView] = useState<'studio' | 'mobile-only' | 'reports'>('studio');
+
+  // Auto-detect initial view: Desktop (>=1024px) -> Schema Editor, Mobile/iPad (<1024px) -> Mobile App
+  const [currentView, setCurrentView] = useState<AppViewMode>(() => {
+    if (typeof window !== 'undefined' && window.innerWidth >= 1024) {
+      return 'schema-editor';
+    }
+    return 'mobile-app';
+  });
+
+  // Optional side-by-side preview on desktop
+  const [showDesktopMobilePreview, setShowDesktopMobilePreview] = useState(false);
 
   // App Configuration
   const [config, setConfig] = useState<AppConfig>(() => StorageService.getConfig());
@@ -84,19 +92,23 @@ export default function App() {
   const todayHealthLog = healthLogs.find((h) => h.date === todayStr);
   const todayPrayerLogs = prayerLogs.filter((p) => p.date === todayStr);
 
-  // Initialize auth listener
+  // Initialize auth listener safely
   useEffect(() => {
-    const unsubscribe = initAuth(
-      (authUser, token) => {
-        setUser(authUser);
-        setAccessToken(token);
-      },
-      () => {
-        setUser(null);
-        setAccessToken(null);
-      }
-    );
-    return () => unsubscribe();
+    try {
+      const unsubscribe = initAuth(
+        (authUser, token) => {
+          setUser(authUser);
+          setAccessToken(token);
+        },
+        () => {
+          setUser(null);
+          setAccessToken(null);
+        }
+      );
+      return () => unsubscribe();
+    } catch (e) {
+      console.warn('Auth init failed:', e);
+    }
   }, []);
 
   const handleLogin = async () => {
@@ -116,9 +128,12 @@ export default function App() {
   };
 
   const handleLogout = async () => {
-    await logout();
-    setUser(null);
-    setAccessToken(null);
+    try {
+      await logout();
+    } finally {
+      setUser(null);
+      setAccessToken(null);
+    }
   };
 
   // Update Config
@@ -172,7 +187,6 @@ export default function App() {
     setLifeLogs(updated);
     StorageService.saveLifeLogs(updated);
 
-    // Sync to Google Sheet if connected
     if (accessToken && config.spreadsheetId) {
       setSyncStatus({ state: 'syncing', pendingCount: 1 });
       try {
@@ -258,7 +272,7 @@ export default function App() {
           (newEntry.tags || []).join(', '),
           JSON.stringify(newEntry.customValues || {}),
         ]);
-        setSyncStatus({ state: 'synced', pendingCount: 0 });
+        setSyncStatus({ state: 'syncing', pendingCount: 0 });
         setTimeout(() => setSyncStatus({ state: 'idle', pendingCount: 0 }), 2500);
       } catch (err: any) {
         setSyncStatus({ state: 'error', pendingCount: 1, message: err.message });
@@ -370,7 +384,7 @@ export default function App() {
   return (
     <div className="min-h-screen bg-stone-100 dark:bg-stone-950 text-stone-900 dark:text-stone-100 flex flex-col font-sans">
       
-      {/* Top Navigation */}
+      {/* Top Navigation Bar */}
       <Navbar
         user={user}
         config={config}
@@ -383,76 +397,86 @@ export default function App() {
         isLoggingIn={isLoggingIn}
       />
 
-      {/* Main View Area */}
-      <main className="flex-1 max-w-7xl w-full mx-auto p-4 sm:p-6 flex flex-col">
+      {/* Main Content Area */}
+      <main className="flex-1 max-w-7xl w-full mx-auto p-3 sm:p-6 flex flex-col">
         
-        {/* VIEW 1: STUDIO & MOBILE COMPANION (AppSheet Dual-Pane) */}
-        {currentView === 'studio' && (
-          <div className="flex-1 grid grid-cols-1 lg:grid-cols-12 gap-6 min-h-[720px]">
+        {/* VIEW 1: DESKTOP SCHEMA EDITOR (Full width AppSheet Studio for Desktop) */}
+        {currentView === 'schema-editor' && (
+          <div className="flex-1 flex flex-col space-y-4">
             
-            {/* Left Desktop Studio: Customizer (7 cols on lg) */}
-            <div className="lg:col-span-7 flex flex-col">
-              <DesktopStudio
-                config={config}
-                onUpdateConfig={handleUpdateConfig}
-                onSaveToSheet={handleSaveSchemaToSheet}
-                isSavingToSheet={isSavingToSheet}
-                onRequestDeleteField={requestDeleteField}
-                onRequestDeleteHabit={requestDeleteHabit}
-              />
-            </div>
+            {/* Desktop Toolbar with Optional Mobile Preview Toggle */}
+            <div className="flex items-center justify-between px-1">
+              <div>
+                <h1 className="text-base font-bold text-stone-900 dark:text-stone-100">
+                  Desktop Schema Studio
+                </h1>
+                <p className="text-xs text-stone-500">
+                  Customize mobile logging fields, habit engine rules, and Google Sheets database mapping.
+                </p>
+              </div>
 
-            {/* Right Mobile Companion Frame (5 cols on lg) */}
-            <div className="lg:col-span-5 flex flex-col items-center">
-              
-              <div className="w-full flex items-center justify-between mb-2 px-1">
-                <div className="flex items-center gap-1.5 text-xs font-semibold text-stone-700 dark:text-stone-300">
-                  <Smartphone className="w-4 h-4 text-emerald-600" />
-                  <span>Mobile Companion Live Preview</span>
-                </div>
+              <div className="hidden lg:flex items-center gap-2">
                 <button
-                  onClick={() => setCurrentView('mobile-only')}
-                  className="text-xs text-emerald-600 dark:text-emerald-400 hover:underline font-medium"
+                  onClick={() => setShowDesktopMobilePreview(!showDesktopMobilePreview)}
+                  className={`inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl border text-xs font-medium transition-colors ${
+                    showDesktopMobilePreview
+                      ? 'bg-emerald-50 dark:bg-emerald-950 border-emerald-300 dark:border-emerald-700 text-emerald-800 dark:text-emerald-200'
+                      : 'bg-white dark:bg-stone-900 border-stone-200 dark:border-stone-800 text-stone-700 dark:text-stone-300 hover:bg-stone-50'
+                  }`}
                 >
-                  Expand Fullscreen →
+                  {showDesktopMobilePreview ? <EyeOff className="w-3.5 h-3.5" /> : <Eye className="w-3.5 h-3.5" />}
+                  <span>{showDesktopMobilePreview ? 'Hide Phone Preview' : 'Side-by-Side Phone Preview'}</span>
                 </button>
               </div>
-
-              {/* iPhone-style device frame */}
-              <div className="w-full max-w-[380px] h-[700px] bg-stone-900 rounded-[44px] p-3 shadow-2xl border-4 border-stone-800 relative flex flex-col ring-1 ring-stone-700/50">
-                {/* Dynamic Island / Speaker notch */}
-                <div className="absolute top-5 left-1/2 -translate-x-1/2 w-28 h-5 bg-black rounded-full z-30 flex items-center justify-end px-2.5">
-                  <div className="w-2.5 h-2.5 rounded-full bg-stone-800" />
-                </div>
-
-                {/* Device Screen */}
-                <div className="w-full h-full rounded-[34px] overflow-hidden bg-white dark:bg-stone-950 flex flex-col">
-                  <MobileView
-                    config={config}
-                    onSaveLifeLog={handleSaveLifeLog}
-                    onSaveHealthLog={handleSaveHealthLog}
-                    onSavePrayerLog={handleSavePrayerLog}
-                    onSaveHabitLog={handleSaveHabitLog}
-                    habitsCheckedToday={habitsCheckedToday}
-                    todayLifeLog={todayLifeLog}
-                    todayHealthLog={todayHealthLog}
-                    todayPrayerLogs={todayPrayerLogs}
-                    isSyncing={syncStatus.state === 'syncing'}
-                    isInDesktopFrame={true}
-                  />
-                </div>
-
-                {/* Home Indicator Bar */}
-                <div className="absolute bottom-4 left-1/2 -translate-x-1/2 w-32 h-1 bg-stone-700 rounded-full pointer-events-none" />
-              </div>
             </div>
 
+            {/* Layout: Full width or split if preview is opened */}
+            <div className={`flex-1 grid gap-6 ${showDesktopMobilePreview ? 'grid-cols-1 lg:grid-cols-12' : 'grid-cols-1'}`}>
+              
+              <div className={showDesktopMobilePreview ? 'lg:col-span-7' : 'w-full'}>
+                <DesktopStudio
+                  config={config}
+                  onUpdateConfig={handleUpdateConfig}
+                  onSaveToSheet={handleSaveSchemaToSheet}
+                  isSavingToSheet={isSavingToSheet}
+                  onRequestDeleteField={requestDeleteField}
+                  onRequestDeleteHabit={requestDeleteHabit}
+                />
+              </div>
+
+              {showDesktopMobilePreview && (
+                <div className="lg:col-span-5 flex flex-col items-center">
+                  <div className="w-full max-w-[380px] h-[720px] bg-stone-900 rounded-[44px] p-3 shadow-2xl border-4 border-stone-800 relative flex flex-col ring-1 ring-stone-700/50">
+                    <div className="absolute top-5 left-1/2 -translate-x-1/2 w-28 h-5 bg-black rounded-full z-30 flex items-center justify-end px-2.5">
+                      <div className="w-2.5 h-2.5 rounded-full bg-stone-800" />
+                    </div>
+                    <div className="w-full h-full rounded-[34px] overflow-hidden bg-white dark:bg-stone-950 flex flex-col">
+                      <MobileView
+                        config={config}
+                        onSaveLifeLog={handleSaveLifeLog}
+                        onSaveHealthLog={handleSaveHealthLog}
+                        onSavePrayerLog={handleSavePrayerLog}
+                        onSaveHabitLog={handleSaveHabitLog}
+                        habitsCheckedToday={habitsCheckedToday}
+                        todayLifeLog={todayLifeLog}
+                        todayHealthLog={todayHealthLog}
+                        todayPrayerLogs={todayPrayerLogs}
+                        isSyncing={syncStatus.state === 'syncing'}
+                        isInDesktopFrame={true}
+                      />
+                    </div>
+                    <div className="absolute bottom-4 left-1/2 -translate-x-1/2 w-32 h-1 bg-stone-700 rounded-full pointer-events-none" />
+                  </div>
+                </div>
+              )}
+
+            </div>
           </div>
         )}
 
-        {/* VIEW 2: DEDICATED MOBILE LOGGER */}
-        {currentView === 'mobile-only' && (
-          <div className="flex-1 flex justify-center py-2">
+        {/* VIEW 2: THE MOBILE & IPAD / TABLET APP ITSELF */}
+        {currentView === 'mobile-app' && (
+          <div className="flex-1 flex justify-center py-1 sm:py-3">
             <MobileView
               config={config}
               onSaveLifeLog={handleSaveLifeLog}

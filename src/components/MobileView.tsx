@@ -166,7 +166,9 @@ export const MobileView: React.FC<MobileViewProps> = ({
 
   return (
     <div className={`flex flex-col bg-stone-50 dark:bg-stone-950 text-stone-900 dark:text-stone-100 ${
-      isInDesktopFrame ? 'h-full' : 'min-h-[calc(100vh-4rem)] max-w-md mx-auto shadow-xl border-x border-stone-200 dark:border-stone-800'
+      isInDesktopFrame 
+        ? 'h-full' 
+        : 'min-h-[calc(100vh-4rem)] w-full max-w-xl md:max-w-2xl mx-auto shadow-sm md:rounded-3xl md:my-4 md:border border-stone-200 dark:border-stone-800'
     }`}>
       
       {/* Mobile Top App Bar */}

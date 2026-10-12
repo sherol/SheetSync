@@ -4,20 +4,23 @@ import {
   FileSpreadsheet, 
   ExternalLink, 
   Smartphone, 
-  Layers, 
+  Settings2, 
   BarChart3, 
   LogOut, 
   CheckCircle2,
-  RefreshCw
+  RefreshCw,
+  Tablet
 } from 'lucide-react';
 import { AppConfig, SyncStatus } from '../types';
+
+export type AppViewMode = 'schema-editor' | 'mobile-app' | 'reports';
 
 interface NavbarProps {
   user: User | null;
   config: AppConfig;
   syncStatus: SyncStatus;
-  currentView: 'studio' | 'mobile-only' | 'reports';
-  onViewChange: (view: 'studio' | 'mobile-only' | 'reports') => void;
+  currentView: AppViewMode;
+  onViewChange: (view: AppViewMode) => void;
   onLoginClick: () => void;
   onLogoutClick: () => void;
   onOpenSpreadsheetModal: () => void;
@@ -35,7 +38,6 @@ export const Navbar: React.FC<NavbarProps> = ({
   onLogoutClick,
   onOpenSpreadsheetModal,
   isLoggingIn,
-  onTriggerSync,
 }) => {
   return (
     <header className="sticky top-0 z-40 w-full border-b border-stone-200 dark:border-stone-800 bg-white/95 dark:bg-stone-950/95 backdrop-blur-md">
@@ -62,7 +64,7 @@ export const Navbar: React.FC<NavbarProps> = ({
                 <>
                   <button 
                     onClick={onOpenSpreadsheetModal}
-                    className="hover:text-emerald-600 dark:hover:text-emerald-400 font-medium truncate max-w-[160px] sm:max-w-[220px] text-left transition-colors"
+                    className="hover:text-emerald-600 dark:hover:text-emerald-400 font-medium truncate max-w-[150px] sm:max-w-[200px] text-left transition-colors"
                     title={config.spreadsheetName || 'Connected Sheet'}
                   >
                     {config.spreadsheetName || 'Connected Sheet'}
@@ -95,30 +97,30 @@ export const Navbar: React.FC<NavbarProps> = ({
           </div>
         </div>
 
-        {/* View Switcher Navigation */}
-        <div className="hidden md:flex items-center p-1 bg-stone-100 dark:bg-stone-900 rounded-xl border border-stone-200 dark:border-stone-800 text-xs font-medium">
+        {/* View Switcher Navigation (Desktop / Tablet) */}
+        <div className="hidden sm:flex items-center p-1 bg-stone-100 dark:bg-stone-900 rounded-xl border border-stone-200 dark:border-stone-800 text-xs font-medium">
           <button
-            onClick={() => onViewChange('studio')}
+            onClick={() => onViewChange('schema-editor')}
             className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg transition-all ${
-              currentView === 'studio'
+              currentView === 'schema-editor'
                 ? 'bg-white dark:bg-stone-800 text-stone-900 dark:text-white shadow-xs font-semibold'
                 : 'text-stone-600 dark:text-stone-400 hover:text-stone-900 dark:hover:text-stone-200'
             }`}
           >
-            <Layers className="w-3.5 h-3.5 text-emerald-600 dark:text-emerald-400" />
-            <span>Studio & Companion</span>
+            <Settings2 className="w-3.5 h-3.5 text-emerald-600 dark:text-emerald-400" />
+            <span>Desktop Schema Editor</span>
           </button>
 
           <button
-            onClick={() => onViewChange('mobile-only')}
+            onClick={() => onViewChange('mobile-app')}
             className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg transition-all ${
-              currentView === 'mobile-only'
+              currentView === 'mobile-app'
                 ? 'bg-white dark:bg-stone-800 text-stone-900 dark:text-white shadow-xs font-semibold'
                 : 'text-stone-600 dark:text-stone-400 hover:text-stone-900 dark:hover:text-stone-200'
             }`}
           >
             <Smartphone className="w-3.5 h-3.5 text-blue-600 dark:text-blue-400" />
-            <span>Mobile Logger</span>
+            <span className="flex items-center gap-1">Mobile / iPad App</span>
           </button>
 
           <button
@@ -134,21 +136,21 @@ export const Navbar: React.FC<NavbarProps> = ({
           </button>
         </div>
 
-        {/* Mobile View Toggles (compact on small screens) */}
-        <div className="flex md:hidden items-center gap-1 bg-stone-100 dark:bg-stone-900 p-1 rounded-lg text-xs">
+        {/* Mobile View Toggles (compact on small phone screens) */}
+        <div className="flex sm:hidden items-center gap-1 bg-stone-100 dark:bg-stone-900 p-1 rounded-lg text-xs">
           <button
-            onClick={() => onViewChange('studio')}
-            className={`p-1.5 rounded ${currentView === 'studio' ? 'bg-white dark:bg-stone-800 text-stone-900 dark:text-white' : 'text-stone-500'}`}
-            title="Studio"
-          >
-            <Layers className="w-4 h-4" />
-          </button>
-          <button
-            onClick={() => onViewChange('mobile-only')}
-            className={`p-1.5 rounded ${currentView === 'mobile-only' ? 'bg-white dark:bg-stone-800 text-stone-900 dark:text-white' : 'text-stone-500'}`}
-            title="Mobile Logger"
+            onClick={() => onViewChange('mobile-app')}
+            className={`p-1.5 rounded ${currentView === 'mobile-app' ? 'bg-white dark:bg-stone-800 text-stone-900 dark:text-white' : 'text-stone-500'}`}
+            title="Mobile / iPad App"
           >
             <Smartphone className="w-4 h-4" />
+          </button>
+          <button
+            onClick={() => onViewChange('schema-editor')}
+            className={`p-1.5 rounded ${currentView === 'schema-editor' ? 'bg-white dark:bg-stone-800 text-stone-900 dark:text-white' : 'text-stone-500'}`}
+            title="Schema Editor"
+          >
+            <Settings2 className="w-4 h-4" />
           </button>
           <button
             onClick={() => onViewChange('reports')}
