@@ -9,7 +9,7 @@ import {
   LogOut, 
   CheckCircle2,
   RefreshCw,
-  Tablet
+  Sparkles
 } from 'lucide-react';
 import { AppConfig, SyncStatus } from '../types';
 
@@ -40,31 +40,34 @@ export const Navbar: React.FC<NavbarProps> = ({
   isLoggingIn,
 }) => {
   return (
-    <header className="sticky top-0 z-40 w-full border-b border-stone-200 dark:border-stone-800 bg-white/95 dark:bg-stone-950/95 backdrop-blur-md">
+    <header className="sticky top-0 z-40 w-full border-b border-stone-800 bg-[#0f1118]/95 backdrop-blur-md">
+      {/* Top rainbow glowing line */}
+      <div className="h-[2px] w-full rainbow-bar opacity-80" />
+
       <div className="max-w-7xl mx-auto px-4 sm:px-6 h-16 flex items-center justify-between gap-4">
         
         {/* Brand & Spreadsheet badge */}
         <div className="flex items-center gap-3">
-          <div className="w-9 h-9 rounded-xl bg-emerald-600 flex items-center justify-center text-white shadow-sm shrink-0">
-            <FileSpreadsheet className="w-5 h-5" />
+          <div className="w-9 h-9 rounded-xl rainbow-bg flex items-center justify-center text-white shadow-md shadow-rose-500/20 shrink-0">
+            <Sparkles className="w-5 h-5 text-white" />
           </div>
           <div>
             <div className="flex items-center gap-2">
-              <span className="font-semibold text-stone-900 dark:text-stone-100 tracking-tight text-base">
+              <span className="font-extrabold tracking-tight text-base rainbow-text">
                 SheetSync
               </span>
-              <span className="text-[10px] font-medium px-1.5 py-0.5 rounded bg-emerald-50 dark:bg-emerald-950/60 text-emerald-700 dark:text-emerald-400 border border-emerald-200 dark:border-emerald-800">
-                AppSheet Companion
+              <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-gradient-to-r from-pink-500/15 via-amber-500/15 to-cyan-500/15 text-pink-300 border border-pink-500/30">
+                Rainbow Studio
               </span>
             </div>
             
             {/* Sheet Link */}
-            <div className="flex items-center gap-1.5 text-xs text-stone-500 dark:text-stone-400">
+            <div className="flex items-center gap-1.5 text-xs text-stone-400">
               {config.spreadsheetId ? (
                 <>
                   <button 
                     onClick={onOpenSpreadsheetModal}
-                    className="hover:text-emerald-600 dark:hover:text-emerald-400 font-medium truncate max-w-[150px] sm:max-w-[200px] text-left transition-colors"
+                    className="hover:text-cyan-400 font-medium truncate max-w-[150px] sm:max-w-[200px] text-left transition-colors"
                     title={config.spreadsheetName || 'Connected Sheet'}
                   >
                     {config.spreadsheetName || 'Connected Sheet'}
@@ -73,23 +76,23 @@ export const Navbar: React.FC<NavbarProps> = ({
                     href={`https://docs.google.com/spreadsheets/d/${config.spreadsheetId}/edit`}
                     target="_blank"
                     rel="noreferrer"
-                    className="text-stone-400 hover:text-emerald-500 transition-colors"
+                    className="text-stone-400 hover:text-emerald-400 transition-colors"
                     title="Open in Google Sheets"
                   >
                     <ExternalLink className="w-3 h-3 inline" />
                   </a>
                   {syncStatus.state === 'syncing' ? (
-                    <RefreshCw className="w-3 h-3 animate-spin text-emerald-500 ml-1" />
+                    <RefreshCw className="w-3 h-3 animate-spin text-cyan-400 ml-1" />
                   ) : (
-                    <CheckCircle2 className="w-3 h-3 text-emerald-500 ml-1" />
+                    <CheckCircle2 className="w-3 h-3 text-emerald-400 ml-1" />
                   )}
                 </>
               ) : (
                 <button
                   onClick={onOpenSpreadsheetModal}
-                  className="text-amber-600 dark:text-amber-400 hover:underline flex items-center gap-1 font-medium"
+                  className="text-amber-400 hover:text-amber-300 hover:underline flex items-center gap-1 font-medium"
                 >
-                  <span className="w-1.5 h-1.5 rounded-full bg-amber-500 inline-block"></span>
+                  <span className="w-1.5 h-1.5 rounded-full bg-amber-400 animate-pulse inline-block"></span>
                   Connect Google Sheet
                 </button>
               )}
@@ -97,64 +100,64 @@ export const Navbar: React.FC<NavbarProps> = ({
           </div>
         </div>
 
-        {/* View Switcher Navigation (Desktop / Tablet) */}
-        <div className="hidden sm:flex items-center p-1 bg-stone-100 dark:bg-stone-900 rounded-xl border border-stone-200 dark:border-stone-800 text-xs font-medium">
+        {/* View Switcher Navigation in Rainbow Order (Red -> Green -> Violet) */}
+        <div className="hidden sm:flex items-center p-1 bg-stone-900/90 rounded-2xl border border-stone-800 text-xs font-medium">
           <button
             onClick={() => onViewChange('schema-editor')}
-            className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg transition-all ${
+            className={`flex items-center gap-1.5 px-3.5 py-1.5 rounded-xl transition-all ${
               currentView === 'schema-editor'
-                ? 'bg-white dark:bg-stone-800 text-stone-900 dark:text-white shadow-xs font-semibold'
-                : 'text-stone-600 dark:text-stone-400 hover:text-stone-900 dark:hover:text-stone-200'
+                ? 'bg-gradient-to-r from-rose-500/20 via-red-500/20 to-orange-500/20 text-rose-300 border border-rose-500/30 font-semibold shadow-xs'
+                : 'text-stone-400 hover:text-stone-200'
             }`}
           >
-            <Settings2 className="w-3.5 h-3.5 text-emerald-600 dark:text-emerald-400" />
+            <Settings2 className={`w-3.5 h-3.5 ${currentView === 'schema-editor' ? 'text-rose-400' : 'text-stone-400'}`} />
             <span>Desktop Schema Editor</span>
           </button>
 
           <button
             onClick={() => onViewChange('mobile-app')}
-            className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg transition-all ${
+            className={`flex items-center gap-1.5 px-3.5 py-1.5 rounded-xl transition-all ${
               currentView === 'mobile-app'
-                ? 'bg-white dark:bg-stone-800 text-stone-900 dark:text-white shadow-xs font-semibold'
-                : 'text-stone-600 dark:text-stone-400 hover:text-stone-900 dark:hover:text-stone-200'
+                ? 'bg-gradient-to-r from-emerald-500/20 via-teal-500/20 to-cyan-500/20 text-emerald-300 border border-emerald-500/30 font-semibold shadow-xs'
+                : 'text-stone-400 hover:text-stone-200'
             }`}
           >
-            <Smartphone className="w-3.5 h-3.5 text-blue-600 dark:text-blue-400" />
-            <span className="flex items-center gap-1">Mobile / iPad App</span>
+            <Smartphone className={`w-3.5 h-3.5 ${currentView === 'mobile-app' ? 'text-emerald-400' : 'text-stone-400'}`} />
+            <span>Mobile / iPad App</span>
           </button>
 
           <button
             onClick={() => onViewChange('reports')}
-            className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg transition-all ${
+            className={`flex items-center gap-1.5 px-3.5 py-1.5 rounded-xl transition-all ${
               currentView === 'reports'
-                ? 'bg-white dark:bg-stone-800 text-stone-900 dark:text-white shadow-xs font-semibold'
-                : 'text-stone-600 dark:text-stone-400 hover:text-stone-900 dark:hover:text-stone-200'
+                ? 'bg-gradient-to-r from-purple-500/20 via-violet-500/20 to-pink-500/20 text-purple-300 border border-purple-500/30 font-semibold shadow-xs'
+                : 'text-stone-400 hover:text-stone-200'
             }`}
           >
-            <BarChart3 className="w-3.5 h-3.5 text-purple-600 dark:text-purple-400" />
+            <BarChart3 className={`w-3.5 h-3.5 ${currentView === 'reports' ? 'text-purple-400' : 'text-stone-400'}`} />
             <span>Monthly Reports</span>
           </button>
         </div>
 
-        {/* Mobile View Toggles (compact on small phone screens) */}
-        <div className="flex sm:hidden items-center gap-1 bg-stone-100 dark:bg-stone-900 p-1 rounded-lg text-xs">
-          <button
-            onClick={() => onViewChange('mobile-app')}
-            className={`p-1.5 rounded ${currentView === 'mobile-app' ? 'bg-white dark:bg-stone-800 text-stone-900 dark:text-white' : 'text-stone-500'}`}
-            title="Mobile / iPad App"
-          >
-            <Smartphone className="w-4 h-4" />
-          </button>
+        {/* Mobile View Toggles in Rainbow Order (Red -> Green -> Violet) */}
+        <div className="flex sm:hidden items-center gap-1 bg-stone-900/90 p-1 rounded-xl border border-stone-800 text-xs">
           <button
             onClick={() => onViewChange('schema-editor')}
-            className={`p-1.5 rounded ${currentView === 'schema-editor' ? 'bg-white dark:bg-stone-800 text-stone-900 dark:text-white' : 'text-stone-500'}`}
+            className={`p-2 rounded-lg transition-colors ${currentView === 'schema-editor' ? 'bg-rose-500/20 text-rose-400 border border-rose-500/30' : 'text-stone-400'}`}
             title="Schema Editor"
           >
             <Settings2 className="w-4 h-4" />
           </button>
           <button
+            onClick={() => onViewChange('mobile-app')}
+            className={`p-2 rounded-lg transition-colors ${currentView === 'mobile-app' ? 'bg-emerald-500/20 text-emerald-400 border border-emerald-500/30' : 'text-stone-400'}`}
+            title="Mobile / iPad App"
+          >
+            <Smartphone className="w-4 h-4" />
+          </button>
+          <button
             onClick={() => onViewChange('reports')}
-            className={`p-1.5 rounded ${currentView === 'reports' ? 'bg-white dark:bg-stone-800 text-stone-900 dark:text-white' : 'text-stone-500'}`}
+            className={`p-2 rounded-lg transition-colors ${currentView === 'reports' ? 'bg-purple-500/20 text-purple-400 border border-purple-500/30' : 'text-stone-400'}`}
             title="Monthly Reports"
           >
             <BarChart3 className="w-4 h-4" />
@@ -165,24 +168,24 @@ export const Navbar: React.FC<NavbarProps> = ({
         <div className="flex items-center gap-3">
           {user ? (
             <div className="flex items-center gap-2.5">
-              <div className="flex items-center gap-2 pl-2 pr-1 py-1 rounded-full bg-stone-100 dark:bg-stone-900 border border-stone-200 dark:border-stone-800">
+              <div className="flex items-center gap-2 pl-2 pr-1 py-1 rounded-full bg-stone-900 border border-stone-800">
                 {user.photoURL ? (
                   <img
                     src={user.photoURL}
                     alt={user.displayName || 'User'}
-                    className="w-6 h-6 rounded-full border border-stone-300 dark:border-stone-700 object-cover"
+                    className="w-6 h-6 rounded-full border border-purple-500/40 object-cover"
                   />
                 ) : (
-                  <div className="w-6 h-6 rounded-full bg-emerald-600 text-white text-xs flex items-center justify-center font-bold">
+                  <div className="w-6 h-6 rounded-full rainbow-bg text-white text-xs flex items-center justify-center font-bold">
                     {(user.displayName || user.email || 'U')[0].toUpperCase()}
                   </div>
                 )}
-                <span className="text-xs font-medium text-stone-800 dark:text-stone-200 hidden sm:inline max-w-[120px] truncate">
+                <span className="text-xs font-medium text-stone-200 hidden sm:inline max-w-[120px] truncate">
                   {user.displayName || user.email}
                 </span>
                 <button
                   onClick={onLogoutClick}
-                  className="p-1 text-stone-400 hover:text-stone-700 dark:hover:text-stone-200 rounded-full transition-colors ml-1"
+                  className="p-1 text-stone-400 hover:text-stone-200 rounded-full transition-colors ml-1"
                   title="Sign out"
                 >
                   <LogOut className="w-3.5 h-3.5" />
@@ -193,7 +196,7 @@ export const Navbar: React.FC<NavbarProps> = ({
             <button
               onClick={onLoginClick}
               disabled={isLoggingIn}
-              className="inline-flex items-center gap-2 px-3 py-1.5 rounded-lg border border-stone-300 dark:border-stone-700 bg-white dark:bg-stone-900 hover:bg-stone-50 dark:hover:bg-stone-800 text-stone-800 dark:text-stone-200 text-xs font-semibold shadow-xs transition-colors"
+              className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-xl border border-stone-700 bg-stone-900/90 hover:border-pink-500/40 text-stone-200 text-xs font-semibold shadow-xs transition-all hover:shadow-md hover:shadow-pink-500/10"
             >
               <svg className="w-3.5 h-3.5" viewBox="0 0 24 24">
                 <path

@@ -1,1 +1,23 @@
 @import "tailwindcss";
+
+@layer utilities {
+  .rainbow-text {
+    background: linear-gradient(135deg, #f43f5e 0%, #fb923c 20%, #facc15 40%, #10b981 60%, #06b6d4 80%, #a855f7 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+  }
+  .rainbow-bg {
+    background: linear-gradient(135deg, #f43f5e 0%, #fb923c 20%, #facc15 40%, #10b981 60%, #06b6d4 80%, #a855f7 100%);
+  }
+  .rainbow-bar {
+    background: linear-gradient(90deg, #f43f5e, #fb923c, #facc15, #10b981, #06b6d4, #a855f7);
+  }
+}
+
+body {
+  background-color: #0c0d12;
+  color: #f3f4f6;
+  font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+  margin: 0;
+  padding: 0;
+}

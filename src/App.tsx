@@ -382,7 +382,7 @@ export default function App() {
   };
 
   return (
-    <div className="min-h-screen bg-stone-100 dark:bg-stone-950 text-stone-900 dark:text-stone-100 flex flex-col font-sans">
+    <div className="min-h-screen bg-[#0c0d14] text-stone-100 flex flex-col font-sans">
       
       {/* Top Navigation Bar */}
       <Navbar
@@ -407,10 +407,10 @@ export default function App() {
             {/* Desktop Toolbar with Optional Mobile Preview Toggle */}
             <div className="flex items-center justify-between px-1">
               <div>
-                <h1 className="text-base font-bold text-stone-900 dark:text-stone-100">
+                <h1 className="text-base font-extrabold text-white tracking-wide">
                   Desktop Schema Studio
                 </h1>
-                <p className="text-xs text-stone-500">
+                <p className="text-xs text-stone-400">
                   Customize mobile logging fields, habit engine rules, and Google Sheets database mapping.
                 </p>
               </div>
@@ -418,13 +418,13 @@ export default function App() {
               <div className="hidden lg:flex items-center gap-2">
                 <button
                   onClick={() => setShowDesktopMobilePreview(!showDesktopMobilePreview)}
-                  className={`inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl border text-xs font-medium transition-colors ${
+                  className={`inline-flex items-center gap-2 px-3.5 py-2 rounded-xl border text-xs font-bold transition-all ${
                     showDesktopMobilePreview
-                      ? 'bg-emerald-50 dark:bg-emerald-950 border-emerald-300 dark:border-emerald-700 text-emerald-800 dark:text-emerald-200'
-                      : 'bg-white dark:bg-stone-900 border-stone-200 dark:border-stone-800 text-stone-700 dark:text-stone-300 hover:bg-stone-50'
+                      ? 'bg-gradient-to-r from-pink-500/20 via-purple-500/20 to-cyan-500/20 border-pink-500/40 text-pink-300 shadow-md shadow-pink-500/10'
+                      : 'bg-[#141622] border-stone-800 text-stone-300 hover:text-white hover:border-stone-700'
                   }`}
                 >
-                  {showDesktopMobilePreview ? <EyeOff className="w-3.5 h-3.5" /> : <Eye className="w-3.5 h-3.5" />}
+                  {showDesktopMobilePreview ? <EyeOff className="w-3.5 h-3.5 text-pink-400" /> : <Eye className="w-3.5 h-3.5 text-cyan-400" />}
                   <span>{showDesktopMobilePreview ? 'Hide Phone Preview' : 'Side-by-Side Phone Preview'}</span>
                 </button>
               </div>

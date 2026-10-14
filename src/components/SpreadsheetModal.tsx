@@ -98,7 +98,6 @@ export const SpreadsheetModal: React.FC<SpreadsheetModalProps> = ({
 
   const handleManualConnect = async () => {
     if (!manualInput.trim()) return;
-    // Extract ID if full URL was pasted
     let id = manualInput.trim();
     const urlMatch = manualInput.match(/\/spreadsheets\/d\/([a-zA-Z0-9-_]+)/);
     if (urlMatch && urlMatch[1]) {
@@ -106,7 +105,6 @@ export const SpreadsheetModal: React.FC<SpreadsheetModalProps> = ({
     }
 
     if (!accessToken) {
-      // Allow saving ID locally even in demo mode
       onUpdateSpreadsheet(id, 'Custom Linked Sheet');
       onClose();
       return;
@@ -132,27 +130,29 @@ export const SpreadsheetModal: React.FC<SpreadsheetModalProps> = ({
   if (!isOpen) return null;
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-xs">
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/75 backdrop-blur-sm">
       <div 
-        className="w-full max-w-xl bg-white dark:bg-stone-900 border border-stone-200 dark:border-stone-800 rounded-2xl p-6 shadow-2xl text-stone-900 dark:text-stone-100 flex flex-col max-h-[90vh]"
+        className="w-full max-w-xl bg-[#12141f] border border-stone-800 rounded-3xl p-6 shadow-2xl text-stone-100 flex flex-col max-h-[90vh] relative overflow-hidden"
         role="dialog"
       >
+        <div className="absolute top-0 left-0 right-0 h-1 rainbow-bar" />
+
         {/* Header */}
-        <div className="flex items-center justify-between pb-4 border-b border-stone-200 dark:border-stone-800">
+        <div className="flex items-center justify-between pb-4 border-b border-stone-800">
           <div className="flex items-center gap-2.5">
-            <div className="w-8 h-8 rounded-lg bg-emerald-100 dark:bg-emerald-950/80 text-emerald-600 dark:text-emerald-400 flex items-center justify-center">
-              <FileSpreadsheet className="w-4 h-4" />
+            <div className="w-9 h-9 rounded-xl rainbow-bg flex items-center justify-center text-white shadow-md shadow-pink-500/20">
+              <FileSpreadsheet className="w-5 h-5 text-white" />
             </div>
             <div>
-              <h2 className="text-base font-semibold">Google Sheets Connection</h2>
-              <p className="text-xs text-stone-500 dark:text-stone-400">
+              <h2 className="text-base font-extrabold text-white">Google Sheets Connection</h2>
+              <p className="text-xs text-stone-400">
                 Link or create a Google Spreadsheet to store your mobile logs
               </p>
             </div>
           </div>
           <button
             onClick={onClose}
-            className="p-1 text-stone-400 hover:text-stone-700 dark:hover:text-stone-200 rounded-lg transition-colors"
+            className="p-1.5 text-stone-400 hover:text-white rounded-xl hover:bg-stone-800 transition-colors"
           >
             <X className="w-5 h-5" />
           </button>
@@ -160,12 +160,12 @@ export const SpreadsheetModal: React.FC<SpreadsheetModalProps> = ({
 
         {/* Current Linked Sheet Status */}
         {config.spreadsheetId && (
-          <div className="mt-4 p-3 rounded-xl bg-emerald-50/80 dark:bg-emerald-950/30 border border-emerald-200 dark:border-emerald-800/60 flex items-center justify-between">
+          <div className="mt-4 p-3.5 rounded-2xl bg-cyan-950/30 border border-cyan-500/30 flex items-center justify-between">
             <div className="flex items-center gap-2.5 overflow-hidden">
-              <div className="w-2 h-2 rounded-full bg-emerald-500 shrink-0 animate-pulse" />
+              <div className="w-2.5 h-2.5 rounded-full bg-cyan-400 shrink-0 animate-pulse" />
               <div className="truncate">
-                <span className="text-xs text-stone-500 dark:text-stone-400 block">Currently Active Sheet:</span>
-                <span className="text-xs font-semibold text-emerald-900 dark:text-emerald-300 truncate block">
+                <span className="text-[11px] text-stone-400 block">Currently Active Sheet:</span>
+                <span className="text-xs font-bold text-cyan-300 truncate block">
                   {config.spreadsheetName || config.spreadsheetId}
                 </span>
               </div>
@@ -174,20 +174,20 @@ export const SpreadsheetModal: React.FC<SpreadsheetModalProps> = ({
               href={`https://docs.google.com/spreadsheets/d/${config.spreadsheetId}/edit`}
               target="_blank"
               rel="noreferrer"
-              className="inline-flex items-center gap-1 px-2.5 py-1 text-xs font-medium text-emerald-700 dark:text-emerald-300 hover:bg-emerald-100 dark:hover:bg-emerald-900/40 rounded-lg transition-colors"
+              className="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-bold text-cyan-300 hover:bg-cyan-500/20 rounded-xl transition-colors shrink-0"
             >
               <span>Open in Sheets</span>
-              <ExternalLink className="w-3 h-3" />
+              <ExternalLink className="w-3.5 h-3.5" />
             </a>
           </div>
         )}
 
         {/* Status notice */}
         {statusMessage && (
-          <div className={`mt-3 p-3 rounded-lg text-xs flex items-center gap-2 ${
+          <div className={`mt-3 p-3.5 rounded-xl text-xs flex items-center gap-2 ${
             statusMessage.type === 'success' 
-              ? 'bg-emerald-100 dark:bg-emerald-950/80 text-emerald-800 dark:text-emerald-200 border border-emerald-300 dark:border-emerald-700' 
-              : 'bg-red-100 dark:bg-red-950/80 text-red-800 dark:text-red-200 border border-red-300 dark:border-red-700'
+              ? 'bg-emerald-950/40 text-emerald-300 border border-emerald-500/30' 
+              : 'bg-rose-950/40 text-rose-300 border border-rose-500/30'
           }`}>
             {statusMessage.type === 'success' ? <Check className="w-4 h-4 shrink-0" /> : <AlertCircle className="w-4 h-4 shrink-0" />}
             <span>{statusMessage.text}</span>
@@ -196,14 +196,14 @@ export const SpreadsheetModal: React.FC<SpreadsheetModalProps> = ({
 
         {/* Auth prompt if not logged in */}
         {!accessToken && (
-          <div className="mt-4 p-4 rounded-xl bg-amber-50 dark:bg-amber-950/30 border border-amber-200 dark:border-amber-800/60 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
+          <div className="mt-4 p-4 rounded-2xl bg-amber-950/30 border border-amber-500/30 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
             <div>
-              <p className="text-xs font-semibold text-amber-900 dark:text-amber-200">Google Account Required</p>
-              <p className="text-xs text-amber-700 dark:text-amber-400">Sign in to read and create spreadsheets in your Google Drive.</p>
+              <p className="text-xs font-bold text-amber-300">Google Account Required</p>
+              <p className="text-xs text-amber-400/80">Sign in to read and create spreadsheets in your Google Drive.</p>
             </div>
             <button
               onClick={onLoginClick}
-              className="px-3 py-1.5 rounded-lg bg-amber-600 hover:bg-amber-500 text-white text-xs font-medium transition-colors shrink-0"
+              className="px-3.5 py-2 rounded-xl bg-gradient-to-r from-amber-500 to-orange-500 hover:opacity-95 text-white text-xs font-bold shadow-md shrink-0"
             >
               Sign In with Google
             </button>
@@ -211,33 +211,33 @@ export const SpreadsheetModal: React.FC<SpreadsheetModalProps> = ({
         )}
 
         {/* Tab Selection */}
-        <div className="mt-4 flex border-b border-stone-200 dark:border-stone-800 text-xs font-medium">
+        <div className="mt-4 flex border-b border-stone-800 text-xs font-semibold gap-2">
           <button
             onClick={() => setActiveTab('create')}
-            className={`pb-2.5 px-3 border-b-2 transition-colors ${
+            className={`pb-2.5 px-3.5 border-b-2 transition-all ${
               activeTab === 'create'
-                ? 'border-emerald-600 text-emerald-600 dark:text-emerald-400 font-semibold'
-                : 'border-transparent text-stone-500 hover:text-stone-800 dark:hover:text-stone-200'
+                ? 'border-pink-500 text-pink-300 font-extrabold'
+                : 'border-transparent text-stone-400 hover:text-stone-200'
             }`}
           >
             Create New Sheet
           </button>
           <button
             onClick={() => setActiveTab('drive')}
-            className={`pb-2.5 px-3 border-b-2 transition-colors ${
+            className={`pb-2.5 px-3.5 border-b-2 transition-all ${
               activeTab === 'drive'
-                ? 'border-emerald-600 text-emerald-600 dark:text-emerald-400 font-semibold'
-                : 'border-transparent text-stone-500 hover:text-stone-800 dark:hover:text-stone-200'
+                ? 'border-cyan-500 text-cyan-300 font-extrabold'
+                : 'border-transparent text-stone-400 hover:text-stone-200'
             }`}
           >
             Choose from Drive
           </button>
           <button
             onClick={() => setActiveTab('manual')}
-            className={`pb-2.5 px-3 border-b-2 transition-colors ${
+            className={`pb-2.5 px-3.5 border-b-2 transition-all ${
               activeTab === 'manual'
-                ? 'border-emerald-600 text-emerald-600 dark:text-emerald-400 font-semibold'
-                : 'border-transparent text-stone-500 hover:text-stone-800 dark:hover:text-stone-200'
+                ? 'border-purple-500 text-purple-300 font-extrabold'
+                : 'border-transparent text-stone-400 hover:text-stone-200'
             }`}
           >
             Enter ID / URL
@@ -249,7 +249,7 @@ export const SpreadsheetModal: React.FC<SpreadsheetModalProps> = ({
           {activeTab === 'create' && (
             <div className="space-y-4">
               <div>
-                <label className="block text-xs font-medium text-stone-700 dark:text-stone-300 mb-1">
+                <label className="block text-xs font-medium text-stone-300 mb-1">
                   Spreadsheet Title
                 </label>
                 <input
@@ -257,32 +257,32 @@ export const SpreadsheetModal: React.FC<SpreadsheetModalProps> = ({
                   value={newTitle}
                   onChange={(e) => setNewTitle(e.target.value)}
                   placeholder="e.g. SheetSync - Life, Health & Prayer"
-                  className="w-full px-3 py-2 text-xs rounded-xl bg-stone-100 dark:bg-stone-800 border border-stone-200 dark:border-stone-700 focus:outline-none focus:ring-2 focus:ring-emerald-500"
+                  className="w-full px-3 py-2 text-xs rounded-xl bg-stone-900 border border-stone-700 text-white focus:outline-none focus:ring-2 focus:ring-pink-500"
                 />
               </div>
 
-              <div className="p-3.5 rounded-xl bg-stone-50 dark:bg-stone-800/60 border border-stone-200 dark:border-stone-700/60 text-xs text-stone-600 dark:text-stone-400 space-y-1.5">
-                <span className="font-semibold text-stone-800 dark:text-stone-200 block">
+              <div className="p-4 rounded-2xl bg-[#171926] border border-stone-800 text-xs text-stone-300 space-y-2">
+                <span className="font-bold text-white block">
                   SheetSync will automatically initialize:
                 </span>
-                <div className="grid grid-cols-2 gap-1.5 pt-1">
-                  <span className="flex items-center gap-1.5 text-stone-700 dark:text-stone-300">
-                    <Check className="w-3 h-3 text-emerald-500" /> Life_Logs
+                <div className="grid grid-cols-2 gap-2 pt-1">
+                  <span className="flex items-center gap-1.5 text-amber-300">
+                    <Check className="w-3.5 h-3.5 text-amber-400 stroke-[3]" /> Life_Logs
                   </span>
-                  <span className="flex items-center gap-1.5 text-stone-700 dark:text-stone-300">
-                    <Check className="w-3 h-3 text-emerald-500" /> Health_Logs
+                  <span className="flex items-center gap-1.5 text-emerald-300">
+                    <Check className="w-3.5 h-3.5 text-emerald-400 stroke-[3]" /> Health_Logs
                   </span>
-                  <span className="flex items-center gap-1.5 text-stone-700 dark:text-stone-300">
-                    <Check className="w-3 h-3 text-emerald-500" /> Prayer_Logs
+                  <span className="flex items-center gap-1.5 text-purple-300">
+                    <Check className="w-3.5 h-3.5 text-purple-400 stroke-[3]" /> Prayer_Logs
                   </span>
-                  <span className="flex items-center gap-1.5 text-stone-700 dark:text-stone-300">
-                    <Check className="w-3 h-3 text-emerald-500" /> Habit_Logs
+                  <span className="flex items-center gap-1.5 text-orange-300">
+                    <Check className="w-3.5 h-3.5 text-orange-400 stroke-[3]" /> Habit_Logs
                   </span>
-                  <span className="flex items-center gap-1.5 text-stone-700 dark:text-stone-300">
-                    <Check className="w-3 h-3 text-emerald-500" /> Monthly_Reports
+                  <span className="flex items-center gap-1.5 text-pink-300">
+                    <Check className="w-3.5 h-3.5 text-pink-400 stroke-[3]" /> Monthly_Reports
                   </span>
-                  <span className="flex items-center gap-1.5 text-stone-700 dark:text-stone-300">
-                    <Check className="w-3 h-3 text-emerald-500" /> App_Config
+                  <span className="flex items-center gap-1.5 text-cyan-300">
+                    <Check className="w-3.5 h-3.5 text-cyan-400 stroke-[3]" /> App_Config
                   </span>
                 </div>
               </div>
@@ -291,7 +291,7 @@ export const SpreadsheetModal: React.FC<SpreadsheetModalProps> = ({
                 type="button"
                 onClick={handleCreateNew}
                 disabled={isCreating}
-                className="w-full py-2.5 px-4 rounded-xl bg-emerald-600 hover:bg-emerald-500 disabled:opacity-50 text-white font-medium text-xs flex items-center justify-center gap-2 shadow-xs transition-colors"
+                className="w-full py-3 px-4 rounded-2xl rainbow-bg hover:opacity-95 disabled:opacity-50 text-white font-extrabold text-xs flex items-center justify-center gap-2 shadow-lg shadow-pink-500/20 transition-all active:scale-[0.99]"
               >
                 {isCreating ? (
                   <>
@@ -310,14 +310,14 @@ export const SpreadsheetModal: React.FC<SpreadsheetModalProps> = ({
 
           {activeTab === 'drive' && (
             <div className="space-y-3">
-              <div className="flex items-center justify-between text-xs text-stone-500">
+              <div className="flex items-center justify-between text-xs text-stone-400">
                 <span>Recent Spreadsheets in your Drive:</span>
                 <button
                   onClick={loadDriveFiles}
                   disabled={isLoadingDrive}
-                  className="flex items-center gap-1 text-emerald-600 hover:text-emerald-500"
+                  className="flex items-center gap-1 text-cyan-400 hover:text-cyan-300 font-bold"
                 >
-                  <RefreshCw className={`w-3 h-3 ${isLoadingDrive ? 'animate-spin' : ''}`} />
+                  <RefreshCw className={`w-3.5 h-3.5 ${isLoadingDrive ? 'animate-spin' : ''}`} />
                   <span>Refresh</span>
                 </button>
               </div>
@@ -329,25 +329,25 @@ export const SpreadsheetModal: React.FC<SpreadsheetModalProps> = ({
                   No spreadsheets found. You can create a new one using the "Create New Sheet" tab.
                 </div>
               ) : (
-                <div className="space-y-1.5 max-h-60 overflow-y-auto">
+                <div className="space-y-2 max-h-60 overflow-y-auto">
                   {driveSheets.map((sheet) => (
                     <div
                       key={sheet.id}
-                      className="p-2.5 rounded-xl border border-stone-200 dark:border-stone-800 hover:border-emerald-500/50 hover:bg-stone-50 dark:hover:bg-stone-800/50 flex items-center justify-between transition-colors cursor-pointer group"
+                      className="p-3 rounded-2xl border border-stone-800 hover:border-cyan-500/50 bg-[#161824] flex items-center justify-between transition-colors cursor-pointer group"
                       onClick={() => handleSelectDriveSheet(sheet)}
                     >
                       <div className="flex items-center gap-2.5 min-w-0">
-                        <FileText className="w-4 h-4 text-emerald-600 shrink-0" />
+                        <FileText className="w-4 h-4 text-cyan-400 shrink-0" />
                         <div className="truncate">
-                          <p className="text-xs font-medium text-stone-800 dark:text-stone-200 truncate group-hover:text-emerald-600 dark:group-hover:text-emerald-400">
+                          <p className="text-xs font-bold text-white truncate group-hover:text-cyan-300">
                             {sheet.name}
                           </p>
-                          <span className="text-[10px] text-stone-400">
+                          <span className="text-[10px] text-stone-500">
                             Modified: {new Date(sheet.modifiedTime).toLocaleDateString()}
                           </span>
                         </div>
                       </div>
-                      <button className="px-2.5 py-1 text-[11px] rounded bg-emerald-100 dark:bg-emerald-950/80 text-emerald-700 dark:text-emerald-300 font-medium group-hover:bg-emerald-600 group-hover:text-white transition-colors">
+                      <button className="px-3 py-1.5 text-xs rounded-xl bg-cyan-500/20 text-cyan-300 font-bold group-hover:bg-cyan-500 group-hover:text-white transition-colors">
                         Connect
                       </button>
                     </div>
@@ -360,7 +360,7 @@ export const SpreadsheetModal: React.FC<SpreadsheetModalProps> = ({
           {activeTab === 'manual' && (
             <div className="space-y-4">
               <div>
-                <label className="block text-xs font-medium text-stone-700 dark:text-stone-300 mb-1">
+                <label className="block text-xs font-medium text-stone-300 mb-1">
                   Google Sheet URL or Spreadsheet ID
                 </label>
                 <input
@@ -368,11 +368,11 @@ export const SpreadsheetModal: React.FC<SpreadsheetModalProps> = ({
                   value={manualInput}
                   onChange={(e) => setManualInput(e.target.value)}
                   placeholder="https://docs.google.com/spreadsheets/d/1BxiMVs0XRA5nFMdKvBdBZjgmUUqptlbs74OgvE2upms/edit"
-                  className="w-full px-3 py-2 text-xs rounded-xl bg-stone-100 dark:bg-stone-800 border border-stone-200 dark:border-stone-700 focus:outline-none focus:ring-2 focus:ring-emerald-500 font-mono"
+                  className="w-full px-3 py-2 text-xs rounded-xl bg-stone-900 border border-stone-700 text-white font-mono focus:outline-none focus:ring-2 focus:ring-purple-500"
                 />
               </div>
 
-              <p className="text-xs text-stone-500 dark:text-stone-400 leading-relaxed">
+              <p className="text-xs text-stone-400 leading-relaxed">
                 Make sure your Google account has editor permissions on this sheet. SheetSync will verify tabs and add missing categories.
               </p>
 
@@ -380,9 +380,9 @@ export const SpreadsheetModal: React.FC<SpreadsheetModalProps> = ({
                 type="button"
                 onClick={handleManualConnect}
                 disabled={isCreating || !manualInput.trim()}
-                className="w-full py-2.5 px-4 rounded-xl bg-emerald-600 hover:bg-emerald-500 disabled:opacity-50 text-white font-medium text-xs flex items-center justify-center gap-2 transition-colors"
+                className="w-full py-3 px-4 rounded-2xl rainbow-bg hover:opacity-95 disabled:opacity-50 text-white font-extrabold text-xs flex items-center justify-center gap-2 transition-all active:scale-[0.99]"
               >
-                {isCreating ? <RefreshCw className="w-3.5 h-3.5 animate-spin" /> : <Check className="w-3.5 h-3.5" />}
+                {isCreating ? <RefreshCw className="w-3.5 h-3.5 animate-spin" /> : <Check className="w-3.5 h-3.5 stroke-[3]" />}
                 <span>Verify & Connect Sheet</span>
               </button>
             </div>

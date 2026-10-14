@@ -22,7 +22,6 @@ import {
   LifeLogEntry, 
   HealthLogEntry, 
   PrayerLogEntry, 
-  HabitLogEntry, 
   CustomField 
 } from '../types';
 
@@ -40,6 +39,20 @@ interface MobileViewProps {
   isInDesktopFrame?: boolean;
 }
 
+// 10-point chromatic rainbow palette for Mood Buttons
+const MOOD_RAINBOW = [
+  { val: 1, label: '1', bgActive: 'bg-red-600 text-white shadow-lg shadow-red-500/40', bgIdle: 'bg-red-500/10 text-red-400 border border-red-500/30' },
+  { val: 2, label: '2', bgActive: 'bg-rose-600 text-white shadow-lg shadow-rose-500/40', bgIdle: 'bg-rose-500/10 text-rose-400 border border-rose-500/30' },
+  { val: 3, label: '3', bgActive: 'bg-orange-600 text-white shadow-lg shadow-orange-500/40', bgIdle: 'bg-orange-500/10 text-orange-400 border border-orange-500/30' },
+  { val: 4, label: '4', bgActive: 'bg-amber-600 text-white shadow-lg shadow-amber-500/40', bgIdle: 'bg-amber-500/10 text-amber-400 border border-amber-500/30' },
+  { val: 5, label: '5', bgActive: 'bg-yellow-500 text-black shadow-lg shadow-yellow-500/40', bgIdle: 'bg-yellow-500/10 text-yellow-300 border border-yellow-500/30' },
+  { val: 6, label: '6', bgActive: 'bg-lime-500 text-black shadow-lg shadow-lime-500/40', bgIdle: 'bg-lime-500/10 text-lime-400 border border-lime-500/30' },
+  { val: 7, label: '7', bgActive: 'bg-emerald-500 text-white shadow-lg shadow-emerald-500/40', bgIdle: 'bg-emerald-500/10 text-emerald-400 border border-emerald-500/30' },
+  { val: 8, label: '8', bgActive: 'bg-teal-500 text-white shadow-lg shadow-teal-500/40', bgIdle: 'bg-teal-500/10 text-teal-300 border border-teal-500/30' },
+  { val: 9, label: '9', bgActive: 'bg-cyan-500 text-white shadow-lg shadow-cyan-500/40', bgIdle: 'bg-cyan-500/10 text-cyan-300 border border-cyan-500/30' },
+  { val: 10, label: '10', bgActive: 'bg-gradient-to-r from-fuchsia-500 to-purple-600 text-white shadow-lg shadow-purple-500/50', bgIdle: 'bg-purple-500/15 text-purple-300 border border-purple-500/30' },
+];
+
 export const MobileView: React.FC<MobileViewProps> = ({
   config,
   onSaveLifeLog,
@@ -49,7 +62,6 @@ export const MobileView: React.FC<MobileViewProps> = ({
   habitsCheckedToday,
   todayLifeLog,
   todayHealthLog,
-  todayPrayerLogs = [],
   isSyncing,
   isInDesktopFrame = false,
 }) => {
@@ -165,99 +177,99 @@ export const MobileView: React.FC<MobileViewProps> = ({
   };
 
   return (
-    <div className={`flex flex-col bg-stone-50 dark:bg-stone-950 text-stone-900 dark:text-stone-100 ${
+    <div className={`flex flex-col bg-[#0b0c10] text-stone-100 ${
       isInDesktopFrame 
         ? 'h-full' 
-        : 'min-h-[calc(100vh-4rem)] w-full max-w-xl md:max-w-2xl mx-auto shadow-sm md:rounded-3xl md:my-4 md:border border-stone-200 dark:border-stone-800'
+        : 'min-h-[calc(100vh-4rem)] w-full max-w-xl md:max-w-2xl mx-auto shadow-2xl md:rounded-3xl md:my-4 md:border border-stone-800'
     }`}>
       
       {/* Mobile Top App Bar */}
-      <div className="sticky top-0 z-20 bg-white/90 dark:bg-stone-900/90 backdrop-blur-md border-b border-stone-200 dark:border-stone-800 px-4 py-3 shrink-0">
+      <div className="sticky top-0 z-20 bg-[#10121a]/95 backdrop-blur-md border-b border-stone-800 px-4 py-3 shrink-0">
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-2">
-            <span className="font-bold text-sm tracking-tight text-stone-900 dark:text-stone-100">
+            <span className="font-extrabold text-sm tracking-tight rainbow-text">
               SheetSync
             </span>
-            <span className="text-[10px] px-2 py-0.5 rounded-full font-medium bg-emerald-100 dark:bg-emerald-950 text-emerald-700 dark:text-emerald-300">
+            <span className="text-[10px] px-2 py-0.5 rounded-full font-bold bg-gradient-to-r from-rose-500/20 to-amber-500/20 text-rose-300 border border-rose-500/30">
               Fast Log
             </span>
           </div>
 
-          <div className="flex items-center gap-1.5 text-xs text-stone-500 bg-stone-100 dark:bg-stone-800 px-2 py-1 rounded-lg">
-            <Calendar className="w-3.5 h-3.5 text-stone-400" />
+          <div className="flex items-center gap-1.5 text-xs text-stone-300 bg-stone-900 border border-stone-800 px-2.5 py-1 rounded-xl">
+            <Calendar className="w-3.5 h-3.5 text-cyan-400" />
             <input
               type="date"
               value={selectedDate}
               onChange={(e) => setSelectedDate(e.target.value)}
-              className="bg-transparent text-xs text-stone-700 dark:text-stone-300 focus:outline-none cursor-pointer"
+              className="bg-transparent text-xs text-stone-200 focus:outline-none cursor-pointer"
             />
           </div>
         </div>
 
-        {/* Quick summary strip */}
+        {/* Rainbow Quick Summary Strip (Red -> Orange -> Green -> Violet) */}
         <div className="mt-2.5 grid grid-cols-4 gap-1.5 text-center text-[10px]">
-          <div className="bg-amber-50 dark:bg-amber-950/40 border border-amber-200 dark:border-amber-800/60 p-1 rounded-lg">
-            <span className="text-amber-800 dark:text-amber-300 block font-semibold">{mood}/10</span>
-            <span className="text-amber-600 dark:text-amber-400">Mood</span>
+          <div className="bg-rose-500/10 border border-rose-500/30 p-1.5 rounded-xl shadow-xs">
+            <span className="text-rose-300 block font-bold text-xs">{mood}/10</span>
+            <span className="text-rose-400/80">Mood</span>
           </div>
-          <div className="bg-blue-50 dark:bg-blue-950/40 border border-blue-200 dark:border-blue-800/60 p-1 rounded-lg">
-            <span className="text-blue-800 dark:text-blue-300 block font-semibold">{waterGlasses} gls</span>
-            <span className="text-blue-600 dark:text-blue-400">Hydration</span>
+          <div className="bg-orange-500/10 border border-orange-500/30 p-1.5 rounded-xl shadow-xs">
+            <span className="text-orange-300 block font-bold text-xs">{waterGlasses} gls</span>
+            <span className="text-orange-400/80">Water</span>
           </div>
-          <div className="bg-purple-50 dark:bg-purple-950/40 border border-purple-200 dark:border-purple-800/60 p-1 rounded-lg">
-            <span className="text-purple-800 dark:text-purple-300 block font-semibold">{meditationMinutes}m</span>
-            <span className="text-purple-600 dark:text-purple-400">Prayer</span>
+          <div className="bg-emerald-500/10 border border-emerald-500/30 p-1.5 rounded-xl shadow-xs">
+            <span className="text-emerald-300 block font-bold text-xs">{meditationMinutes}m</span>
+            <span className="text-emerald-400/80">Prayer</span>
           </div>
-          <div className="bg-orange-50 dark:bg-orange-950/40 border border-orange-200 dark:border-orange-800/60 p-1 rounded-lg">
-            <span className="text-orange-800 dark:text-orange-300 block font-semibold">{checkedHabits.length}/{config.habitsList.length}</span>
-            <span className="text-orange-600 dark:text-orange-400">Habits</span>
+          <div className="bg-purple-500/10 border border-purple-500/30 p-1.5 rounded-xl shadow-xs">
+            <span className="text-purple-300 block font-bold text-xs">{checkedHabits.length}/{config.habitsList.length}</span>
+            <span className="text-purple-400/80">Habits</span>
           </div>
         </div>
 
-        {/* Fast Category Switcher Buttons */}
-        <div className="mt-3 flex p-1 bg-stone-100 dark:bg-stone-800 rounded-xl gap-1 text-xs font-medium">
+        {/* Fast Category Switcher Buttons in Rainbow Order (Red -> Orange -> Green -> Violet) */}
+        <div className="mt-3 flex p-1 bg-stone-900/90 rounded-2xl gap-1 text-xs font-semibold border border-stone-800">
           <button
             onClick={() => setActiveTab('life')}
-            className={`flex-1 py-1.5 rounded-lg flex items-center justify-center gap-1 transition-all ${
+            className={`flex-1 py-1.5 rounded-xl flex items-center justify-center gap-1.5 transition-all ${
               activeTab === 'life'
-                ? 'bg-white dark:bg-stone-900 text-stone-900 dark:text-white shadow-xs font-semibold'
-                : 'text-stone-500 hover:text-stone-900 dark:hover:text-stone-200'
+                ? 'bg-gradient-to-r from-rose-500/30 to-red-500/20 text-rose-300 border border-rose-500/40 shadow-xs'
+                : 'text-stone-400 hover:text-stone-200'
             }`}
           >
-            <Smile className="w-3.5 h-3.5 text-amber-500" />
+            <Smile className="w-3.5 h-3.5 text-rose-400" />
             <span>Life</span>
           </button>
           <button
             onClick={() => setActiveTab('health')}
-            className={`flex-1 py-1.5 rounded-lg flex items-center justify-center gap-1 transition-all ${
+            className={`flex-1 py-1.5 rounded-xl flex items-center justify-center gap-1.5 transition-all ${
               activeTab === 'health'
-                ? 'bg-white dark:bg-stone-900 text-stone-900 dark:text-white shadow-xs font-semibold'
-                : 'text-stone-500 hover:text-stone-900 dark:hover:text-stone-200'
+                ? 'bg-gradient-to-r from-orange-500/30 to-amber-500/20 text-orange-300 border border-orange-500/40 shadow-xs'
+                : 'text-stone-400 hover:text-stone-200'
             }`}
           >
-            <Activity className="w-3.5 h-3.5 text-red-500" />
+            <Activity className="w-3.5 h-3.5 text-orange-400" />
             <span>Health</span>
           </button>
           <button
             onClick={() => setActiveTab('prayer')}
-            className={`flex-1 py-1.5 rounded-lg flex items-center justify-center gap-1 transition-all ${
+            className={`flex-1 py-1.5 rounded-xl flex items-center justify-center gap-1.5 transition-all ${
               activeTab === 'prayer'
-                ? 'bg-white dark:bg-stone-900 text-stone-900 dark:text-white shadow-xs font-semibold'
-                : 'text-stone-500 hover:text-stone-900 dark:hover:text-stone-200'
+                ? 'bg-gradient-to-r from-emerald-500/30 to-teal-500/20 text-emerald-300 border border-emerald-500/40 shadow-xs'
+                : 'text-stone-400 hover:text-stone-200'
             }`}
           >
-            <Heart className="w-3.5 h-3.5 text-purple-500" />
+            <Heart className="w-3.5 h-3.5 text-emerald-400" />
             <span>Prayer</span>
           </button>
           <button
             onClick={() => setActiveTab('habits')}
-            className={`flex-1 py-1.5 rounded-lg flex items-center justify-center gap-1 transition-all ${
+            className={`flex-1 py-1.5 rounded-xl flex items-center justify-center gap-1.5 transition-all ${
               activeTab === 'habits'
-                ? 'bg-white dark:bg-stone-900 text-stone-900 dark:text-white shadow-xs font-semibold'
-                : 'text-stone-500 hover:text-stone-900 dark:hover:text-stone-200'
+                ? 'bg-gradient-to-r from-purple-500/30 to-violet-500/20 text-purple-300 border border-purple-500/40 shadow-xs'
+                : 'text-stone-400 hover:text-stone-200'
             }`}
           >
-            <Flame className="w-3.5 h-3.5 text-orange-500" />
+            <Flame className="w-3.5 h-3.5 text-purple-400" />
             <span>Habits</span>
           </button>
         </div>
@@ -265,8 +277,8 @@ export const MobileView: React.FC<MobileViewProps> = ({
 
       {/* Instant Notification Banner */}
       {justSavedNotification && (
-        <div className="bg-emerald-600 text-white text-xs font-medium py-1.5 px-4 text-center flex items-center justify-center gap-1.5 animate-in slide-in-from-top duration-150">
-          <CheckCircle className="w-3.5 h-3.5" />
+        <div className="bg-gradient-to-r from-emerald-500 to-teal-500 text-white text-xs font-bold py-2 px-4 text-center flex items-center justify-center gap-1.5 shadow-md animate-in slide-in-from-top duration-150">
+          <CheckCircle className="w-4 h-4" />
           <span>{justSavedNotification}</span>
         </div>
       )}
@@ -278,39 +290,40 @@ export const MobileView: React.FC<MobileViewProps> = ({
         {activeTab === 'life' && (
           <form onSubmit={handleSubmitLife} className="space-y-4">
             
-            {/* Mood selector (1 to 10 tap chips) */}
-            <div className="bg-white dark:bg-stone-900 p-3.5 rounded-2xl border border-stone-200 dark:border-stone-800 shadow-2xs space-y-2">
+            {/* Chromatic Rainbow Mood Selector (1 to 10) */}
+            <div className="bg-[#13151f] p-4 rounded-2xl border border-stone-800 shadow-md space-y-2.5">
               <div className="flex items-center justify-between">
-                <span className="text-xs font-semibold text-stone-800 dark:text-stone-200 flex items-center gap-1.5">
-                  <Smile className="w-4 h-4 text-amber-500" />
+                <span className="text-xs font-bold text-white flex items-center gap-1.5">
+                  <Smile className="w-4 h-4 text-amber-400" />
                   Day Mood Rating
                 </span>
-                <span className="text-xs font-bold text-amber-600 dark:text-amber-400 bg-amber-50 dark:bg-amber-950/60 px-2 py-0.5 rounded-full border border-amber-200 dark:border-amber-800">
+                <span className="text-xs font-extrabold text-amber-300 bg-amber-500/20 px-2.5 py-0.5 rounded-full border border-amber-500/40">
                   {mood} / 10
                 </span>
               </div>
 
+              {/* 10-point chromatic rainbow buttons */}
               <div className="grid grid-cols-10 gap-1 pt-1">
-                {[1, 2, 3, 4, 5, 6, 7, 8, 9, 10].map((val) => (
+                {MOOD_RAINBOW.map((item) => (
                   <button
-                    key={val}
+                    key={item.val}
                     type="button"
-                    onClick={() => setMood(val)}
-                    className={`py-2 text-xs font-bold rounded-lg transition-all ${
-                      mood === val
-                        ? 'bg-amber-500 text-white shadow-xs scale-105'
-                        : 'bg-stone-100 dark:bg-stone-800 text-stone-600 dark:text-stone-300 hover:bg-stone-200 dark:hover:bg-stone-700'
+                    onClick={() => setMood(item.val)}
+                    className={`py-2.5 text-xs font-black rounded-xl transition-all ${
+                      mood === item.val
+                        ? `${item.bgActive} scale-110 z-10 ring-2 ring-white/40`
+                        : `${item.bgIdle} hover:scale-105 opacity-80 hover:opacity-100`
                     }`}
                   >
-                    {val}
+                    {item.label}
                   </button>
                 ))}
               </div>
             </div>
 
-            {/* Energy Level chips */}
-            <div className="bg-white dark:bg-stone-900 p-3.5 rounded-2xl border border-stone-200 dark:border-stone-800 shadow-2xs space-y-2">
-              <span className="text-xs font-semibold text-stone-800 dark:text-stone-200 block">
+            {/* Energy Level chips with warm sunrise colors */}
+            <div className="bg-[#13151f] p-4 rounded-2xl border border-stone-800 shadow-md space-y-2">
+              <span className="text-xs font-bold text-white block">
                 Energy Level
               </span>
               <div className="grid grid-cols-4 gap-2">
@@ -319,10 +332,10 @@ export const MobileView: React.FC<MobileViewProps> = ({
                     key={lvl}
                     type="button"
                     onClick={() => setEnergy(lvl)}
-                    className={`py-2 text-xs font-medium rounded-xl border transition-all text-center ${
+                    className={`py-2 text-xs font-bold rounded-xl border transition-all text-center ${
                       energy === lvl
-                        ? 'border-emerald-600 bg-emerald-50 dark:bg-emerald-950/50 text-emerald-800 dark:text-emerald-200 font-semibold'
-                        : 'border-stone-200 dark:border-stone-800 bg-stone-50 dark:bg-stone-800 text-stone-600 dark:text-stone-400'
+                        ? 'border-amber-400 bg-amber-500/20 text-amber-300 shadow-sm'
+                        : 'border-stone-800 bg-stone-900 text-stone-400 hover:text-stone-200'
                     }`}
                   >
                     {lvl}
@@ -332,9 +345,9 @@ export const MobileView: React.FC<MobileViewProps> = ({
             </div>
 
             {/* Gratitude & Highlight fast text */}
-            <div className="bg-white dark:bg-stone-900 p-3.5 rounded-2xl border border-stone-200 dark:border-stone-800 shadow-2xs space-y-3">
+            <div className="bg-[#13151f] p-4 rounded-2xl border border-stone-800 shadow-md space-y-3">
               <div>
-                <label className="block text-xs font-semibold text-stone-800 dark:text-stone-200 mb-1">
+                <label className="block text-xs font-bold text-stone-200 mb-1">
                   Grateful For Today
                 </label>
                 <input
@@ -342,12 +355,12 @@ export const MobileView: React.FC<MobileViewProps> = ({
                   placeholder="e.g. Good health, family meal, clear sun"
                   value={gratitude}
                   onChange={(e) => setGratitude(e.target.value)}
-                  className="w-full px-3 py-2 text-xs rounded-xl bg-stone-50 dark:bg-stone-800 border border-stone-200 dark:border-stone-700 focus:outline-none focus:ring-2 focus:ring-emerald-500"
+                  className="w-full px-3 py-2 text-xs rounded-xl bg-stone-900 border border-stone-700 text-white focus:outline-none focus:ring-2 focus:ring-amber-500"
                 />
               </div>
 
               <div>
-                <label className="block text-xs font-semibold text-stone-800 dark:text-stone-200 mb-1">
+                <label className="block text-xs font-bold text-stone-200 mb-1">
                   Daily Win / Highlight
                 </label>
                 <input
@@ -355,12 +368,12 @@ export const MobileView: React.FC<MobileViewProps> = ({
                   placeholder="e.g. Finished presentation, ran 5k"
                   value={highlight}
                   onChange={(e) => setHighlight(e.target.value)}
-                  className="w-full px-3 py-2 text-xs rounded-xl bg-stone-50 dark:bg-stone-800 border border-stone-200 dark:border-stone-700 focus:outline-none focus:ring-2 focus:ring-emerald-500"
+                  className="w-full px-3 py-2 text-xs rounded-xl bg-stone-900 border border-stone-700 text-white focus:outline-none focus:ring-2 focus:ring-amber-500"
                 />
               </div>
 
               <div>
-                <label className="block text-xs font-semibold text-stone-800 dark:text-stone-200 mb-1">
+                <label className="block text-xs font-bold text-stone-200 mb-1">
                   Quick Reflection Notes (Optional)
                 </label>
                 <textarea
@@ -368,27 +381,27 @@ export const MobileView: React.FC<MobileViewProps> = ({
                   placeholder="Thoughts, mindset, or evening notes..."
                   value={lifeNotes}
                   onChange={(e) => setLifeNotes(e.target.value)}
-                  className="w-full px-3 py-2 text-xs rounded-xl bg-stone-50 dark:bg-stone-800 border border-stone-200 dark:border-stone-700 focus:outline-none focus:ring-2 focus:ring-emerald-500 resize-none"
+                  className="w-full px-3 py-2 text-xs rounded-xl bg-stone-900 border border-stone-700 text-white focus:outline-none focus:ring-2 focus:ring-amber-500 resize-none"
                 />
               </div>
             </div>
 
             {/* Custom fields configured for Life */}
             {config.lifeFields.filter(f => !['f_mood', 'f_energy', 'f_gratitude', 'f_highlight', 'f_notes'].includes(f.id)).length > 0 && (
-              <div className="bg-white dark:bg-stone-900 p-3.5 rounded-2xl border border-stone-200 dark:border-stone-800 shadow-2xs space-y-3">
-                <span className="text-xs font-semibold text-stone-800 dark:text-stone-200 block">
+              <div className="bg-[#13151f] p-4 rounded-2xl border border-stone-800 shadow-md space-y-3">
+                <span className="text-xs font-bold text-white block">
                   Custom Life Fields
                 </span>
                 {config.lifeFields.filter(f => !['f_mood', 'f_energy', 'f_gratitude', 'f_highlight', 'f_notes'].includes(f.id)).map((cf) => (
                   <div key={cf.id}>
-                    <label className="block text-xs font-medium text-stone-700 dark:text-stone-300 mb-1">
+                    <label className="block text-xs font-medium text-stone-300 mb-1">
                       {cf.label} {cf.unit && `(${cf.unit})`}
                     </label>
                     <input
                       type={cf.type === 'number' || cf.type === 'stepper' ? 'number' : 'text'}
                       value={lifeCustomValues[cf.id] ?? ''}
                       onChange={(e) => setLifeCustomValues({ ...lifeCustomValues, [cf.id]: e.target.value })}
-                      className="w-full px-3 py-2 text-xs rounded-xl bg-stone-50 dark:bg-stone-800 border border-stone-200 dark:border-stone-700 focus:outline-none focus:ring-2 focus:ring-emerald-500"
+                      className="w-full px-3 py-2 text-xs rounded-xl bg-stone-900 border border-stone-700 text-white focus:outline-none focus:ring-2 focus:ring-amber-500"
                     />
                   </div>
                 ))}
@@ -398,7 +411,7 @@ export const MobileView: React.FC<MobileViewProps> = ({
             <button
               type="submit"
               disabled={isSyncing}
-              className="w-full py-3 px-4 rounded-xl bg-emerald-600 hover:bg-emerald-500 active:scale-[0.99] text-white font-semibold text-xs flex items-center justify-center gap-2 shadow-sm transition-all"
+              className="w-full py-3.5 px-4 rounded-2xl bg-gradient-to-r from-rose-500 via-orange-500 to-amber-500 hover:opacity-95 active:scale-[0.99] text-white font-extrabold text-xs flex items-center justify-center gap-2 shadow-lg shadow-rose-500/25 transition-all"
             >
               <Send className="w-3.5 h-3.5" />
               <span>Log Life to Google Sheet</span>
@@ -410,15 +423,15 @@ export const MobileView: React.FC<MobileViewProps> = ({
         {activeTab === 'health' && (
           <form onSubmit={handleSubmitHealth} className="space-y-4">
             
-            {/* Sleep Hours Stepper */}
-            <div className="bg-white dark:bg-stone-900 p-3.5 rounded-2xl border border-stone-200 dark:border-stone-800 shadow-2xs flex items-center justify-between">
-              <div className="flex items-center gap-2.5">
-                <div className="w-8 h-8 rounded-xl bg-indigo-50 dark:bg-indigo-950/60 text-indigo-600 flex items-center justify-center">
+            {/* Sleep Hours Stepper with Indigo/Cyan Glow */}
+            <div className="bg-[#13151f] p-4 rounded-2xl border border-stone-800 shadow-md flex items-center justify-between">
+              <div className="flex items-center gap-3">
+                <div className="w-9 h-9 rounded-xl bg-indigo-500/20 text-indigo-400 border border-indigo-500/30 flex items-center justify-center">
                   <Moon className="w-4 h-4" />
                 </div>
                 <div>
-                  <span className="text-xs font-semibold text-stone-800 dark:text-stone-200 block">Sleep Duration</span>
-                  <span className="text-[11px] text-stone-500">Rest recorded</span>
+                  <span className="text-xs font-bold text-white block">Sleep Duration</span>
+                  <span className="text-[11px] text-stone-400">Night rest</span>
                 </div>
               </div>
 
@@ -426,32 +439,32 @@ export const MobileView: React.FC<MobileViewProps> = ({
                 <button
                   type="button"
                   onClick={() => setSleepHours((prev) => Math.max(0, Math.round((prev - 0.5) * 10) / 10))}
-                  className="w-8 h-8 rounded-lg bg-stone-100 dark:bg-stone-800 hover:bg-stone-200 flex items-center justify-center text-stone-700 dark:text-stone-300 font-bold"
+                  className="w-8 h-8 rounded-xl bg-stone-900 hover:bg-stone-800 border border-stone-700 flex items-center justify-center text-stone-200 font-bold"
                 >
                   <Minus className="w-3.5 h-3.5" />
                 </button>
-                <span className="text-sm font-bold text-stone-900 dark:text-stone-100 w-12 text-center">
+                <span className="text-sm font-extrabold text-cyan-300 w-12 text-center">
                   {sleepHours}h
                 </span>
                 <button
                   type="button"
                   onClick={() => setSleepHours((prev) => Math.min(16, Math.round((prev + 0.5) * 10) / 10))}
-                  className="w-8 h-8 rounded-lg bg-stone-100 dark:bg-stone-800 hover:bg-stone-200 flex items-center justify-center text-stone-700 dark:text-stone-300 font-bold"
+                  className="w-8 h-8 rounded-xl bg-indigo-600 hover:bg-indigo-500 text-white flex items-center justify-center font-bold shadow-md shadow-indigo-500/30"
                 >
                   <Plus className="w-3.5 h-3.5" />
                 </button>
               </div>
             </div>
 
-            {/* Water Stepper */}
-            <div className="bg-white dark:bg-stone-900 p-3.5 rounded-2xl border border-stone-200 dark:border-stone-800 shadow-2xs flex items-center justify-between">
-              <div className="flex items-center gap-2.5">
-                <div className="w-8 h-8 rounded-xl bg-blue-50 dark:bg-blue-950/60 text-blue-600 flex items-center justify-center">
+            {/* Water Stepper with Neon Cyan */}
+            <div className="bg-[#13151f] p-4 rounded-2xl border border-stone-800 shadow-md flex items-center justify-between">
+              <div className="flex items-center gap-3">
+                <div className="w-9 h-9 rounded-xl bg-cyan-500/20 text-cyan-400 border border-cyan-500/30 flex items-center justify-center">
                   <Droplet className="w-4 h-4" />
                 </div>
                 <div>
-                  <span className="text-xs font-semibold text-stone-800 dark:text-stone-200 block">Water Intake</span>
-                  <span className="text-[11px] text-stone-500">250ml glasses (~{(waterGlasses * 0.25).toFixed(1)}L)</span>
+                  <span className="text-xs font-bold text-white block">Water Intake</span>
+                  <span className="text-[11px] text-stone-400">250ml glasses (~{(waterGlasses * 0.25).toFixed(1)}L)</span>
                 </div>
               </div>
 
@@ -459,17 +472,17 @@ export const MobileView: React.FC<MobileViewProps> = ({
                 <button
                   type="button"
                   onClick={() => setWaterGlasses((prev) => Math.max(0, prev - 1))}
-                  className="w-8 h-8 rounded-lg bg-stone-100 dark:bg-stone-800 hover:bg-stone-200 flex items-center justify-center text-stone-700 dark:text-stone-300 font-bold"
+                  className="w-8 h-8 rounded-xl bg-stone-900 hover:bg-stone-800 border border-stone-700 flex items-center justify-center text-stone-200 font-bold"
                 >
                   <Minus className="w-3.5 h-3.5" />
                 </button>
-                <span className="text-sm font-bold text-stone-900 dark:text-stone-100 w-12 text-center">
+                <span className="text-sm font-extrabold text-cyan-300 w-12 text-center">
                   {waterGlasses}
                 </span>
                 <button
                   type="button"
                   onClick={() => setWaterGlasses((prev) => prev + 1)}
-                  className="w-8 h-8 rounded-lg bg-blue-600 text-white hover:bg-blue-500 flex items-center justify-center font-bold"
+                  className="w-8 h-8 rounded-xl bg-gradient-to-r from-cyan-500 to-teal-500 text-white hover:opacity-95 flex items-center justify-center font-bold shadow-md shadow-cyan-500/30"
                 >
                   <Plus className="w-3.5 h-3.5" />
                 </button>
@@ -477,11 +490,11 @@ export const MobileView: React.FC<MobileViewProps> = ({
             </div>
 
             {/* Workout toggle & details */}
-            <div className="bg-white dark:bg-stone-900 p-3.5 rounded-2xl border border-stone-200 dark:border-stone-800 shadow-2xs space-y-3">
+            <div className="bg-[#13151f] p-4 rounded-2xl border border-stone-800 shadow-md space-y-3">
               <div className="flex items-center justify-between">
                 <div className="flex items-center gap-2">
-                  <Dumbbell className="w-4 h-4 text-emerald-600" />
-                  <span className="text-xs font-semibold text-stone-800 dark:text-stone-200">
+                  <Dumbbell className="w-4 h-4 text-emerald-400" />
+                  <span className="text-xs font-bold text-white">
                     Workout / Exercise Completed?
                   </span>
                 </div>
@@ -490,11 +503,11 @@ export const MobileView: React.FC<MobileViewProps> = ({
                   type="button"
                   onClick={() => setWorkoutDone(!workoutDone)}
                   className={`w-12 h-6 rounded-full transition-colors relative ${
-                    workoutDone ? 'bg-emerald-600' : 'bg-stone-300 dark:bg-stone-700'
+                    workoutDone ? 'bg-gradient-to-r from-emerald-500 to-teal-500' : 'bg-stone-800'
                   }`}
                 >
                   <span
-                    className={`block w-5 h-5 rounded-full bg-white shadow-xs transition-transform absolute top-0.5 ${
+                    className={`block w-5 h-5 rounded-full bg-white shadow-md transition-transform absolute top-0.5 ${
                       workoutDone ? 'left-6' : 'left-1'
                     }`}
                   />
@@ -502,13 +515,13 @@ export const MobileView: React.FC<MobileViewProps> = ({
               </div>
 
               {workoutDone && (
-                <div className="grid grid-cols-2 gap-2 pt-2 border-t border-stone-100 dark:border-stone-800">
+                <div className="grid grid-cols-2 gap-2 pt-2 border-t border-stone-800">
                   <div>
-                    <label className="block text-[11px] font-medium text-stone-500 mb-1">Activity Type</label>
+                    <label className="block text-[11px] font-medium text-stone-400 mb-1">Activity Type</label>
                     <select
                       value={workoutType}
                       onChange={(e) => setWorkoutType(e.target.value)}
-                      className="w-full px-2.5 py-1.5 text-xs rounded-xl bg-stone-50 dark:bg-stone-800 border border-stone-200 dark:border-stone-700"
+                      className="w-full px-2.5 py-1.5 text-xs rounded-xl bg-stone-900 border border-stone-700 text-white"
                     >
                       <option>Strength / Gym</option>
                       <option>Running</option>
@@ -520,50 +533,56 @@ export const MobileView: React.FC<MobileViewProps> = ({
                   </div>
 
                   <div>
-                    <label className="block text-[11px] font-medium text-stone-500 mb-1">Duration (min)</label>
+                    <label className="block text-[11px] font-medium text-stone-400 mb-1">Duration (min)</label>
                     <input
                       type="number"
                       value={workoutDuration}
                       onChange={(e) => setWorkoutDuration(parseInt(e.target.value) || 0)}
-                      className="w-full px-2.5 py-1.5 text-xs rounded-xl bg-stone-50 dark:bg-stone-800 border border-stone-200 dark:border-stone-700"
+                      className="w-full px-2.5 py-1.5 text-xs rounded-xl bg-stone-900 border border-stone-700 text-white"
                     />
                   </div>
                 </div>
               )}
             </div>
 
-            {/* Stress level (1 to 5) */}
-            <div className="bg-white dark:bg-stone-900 p-3.5 rounded-2xl border border-stone-200 dark:border-stone-800 shadow-2xs space-y-2">
+            {/* Stress level (1 to 5) with chromatic scale */}
+            <div className="bg-[#13151f] p-4 rounded-2xl border border-stone-800 shadow-md space-y-2">
               <div className="flex items-center justify-between">
-                <span className="text-xs font-semibold text-stone-800 dark:text-stone-200">
+                <span className="text-xs font-bold text-white">
                   Stress Level (1 Calm — 5 High)
                 </span>
-                <span className="text-xs font-bold text-stone-700 dark:text-stone-300">
+                <span className="text-xs font-extrabold text-rose-400">
                   {stressLevel}/5
                 </span>
               </div>
               <div className="grid grid-cols-5 gap-1.5">
-                {([1, 2, 3, 4, 5] as const).map((lvl) => (
+                {[
+                  { lvl: 1, label: '1 Calm', color: 'bg-emerald-500 text-white shadow-emerald-500/30' },
+                  { lvl: 2, label: '2 Low', color: 'bg-teal-500 text-white shadow-teal-500/30' },
+                  { lvl: 3, label: '3 Mid', color: 'bg-amber-500 text-black shadow-amber-500/30' },
+                  { lvl: 4, label: '4 High', color: 'bg-orange-500 text-white shadow-orange-500/30' },
+                  { lvl: 5, label: '5 Peak', color: 'bg-rose-600 text-white shadow-rose-500/40' },
+                ].map((item) => (
                   <button
-                    key={lvl}
+                    key={item.lvl}
                     type="button"
-                    onClick={() => setStressLevel(lvl)}
-                    className={`py-2 text-xs font-bold rounded-lg transition-all ${
-                      stressLevel === lvl
-                        ? 'bg-red-500 text-white shadow-xs'
-                        : 'bg-stone-100 dark:bg-stone-800 text-stone-600 dark:text-stone-300'
+                    onClick={() => setStressLevel(item.lvl as any)}
+                    className={`py-2 text-xs font-bold rounded-xl transition-all ${
+                      stressLevel === item.lvl
+                        ? `${item.color} shadow-lg scale-105 ring-1 ring-white/30`
+                        : 'bg-stone-900 border border-stone-800 text-stone-400'
                     }`}
                   >
-                    {lvl}
+                    {item.label}
                   </button>
                 ))}
               </div>
             </div>
 
             {/* Nutrition & Vitals */}
-            <div className="bg-white dark:bg-stone-900 p-3.5 rounded-2xl border border-stone-200 dark:border-stone-800 shadow-2xs space-y-3">
+            <div className="bg-[#13151f] p-4 rounded-2xl border border-stone-800 shadow-md space-y-3">
               <div>
-                <label className="block text-xs font-semibold text-stone-800 dark:text-stone-200 mb-1">
+                <label className="block text-xs font-bold text-stone-200 mb-1">
                   Nutrition Quality
                 </label>
                 <div className="grid grid-cols-4 gap-1.5">
@@ -572,10 +591,10 @@ export const MobileView: React.FC<MobileViewProps> = ({
                       key={nut}
                       type="button"
                       onClick={() => setNutrition(nut)}
-                      className={`py-1.5 text-xs rounded-xl border transition-all text-center ${
+                      className={`py-2 text-xs rounded-xl font-bold border transition-all text-center ${
                         nutrition === nut
-                          ? 'border-emerald-600 bg-emerald-50 dark:bg-emerald-950/50 text-emerald-800 dark:text-emerald-200 font-semibold'
-                          : 'border-stone-200 dark:border-stone-800 bg-stone-50 dark:bg-stone-800 text-stone-600 dark:text-stone-400'
+                          ? 'border-emerald-400 bg-emerald-500/20 text-emerald-300'
+                          : 'border-stone-800 bg-stone-900 text-stone-400'
                       }`}
                     >
                       {nut}
@@ -585,7 +604,7 @@ export const MobileView: React.FC<MobileViewProps> = ({
               </div>
 
               <div>
-                <label className="block text-xs font-semibold text-stone-800 dark:text-stone-200 mb-1">
+                <label className="block text-xs font-bold text-stone-200 mb-1">
                   Symptoms / Vitals / Supplements
                 </label>
                 <input
@@ -593,7 +612,7 @@ export const MobileView: React.FC<MobileViewProps> = ({
                   placeholder="e.g. 120/80 BP, Magnesium, no joint pain"
                   value={healthVitals}
                   onChange={(e) => setHealthVitals(e.target.value)}
-                  className="w-full px-3 py-2 text-xs rounded-xl bg-stone-50 dark:bg-stone-800 border border-stone-200 dark:border-stone-700"
+                  className="w-full px-3 py-2 text-xs rounded-xl bg-stone-900 border border-stone-700 text-white"
                 />
               </div>
             </div>
@@ -601,7 +620,7 @@ export const MobileView: React.FC<MobileViewProps> = ({
             <button
               type="submit"
               disabled={isSyncing}
-              className="w-full py-3 px-4 rounded-xl bg-red-600 hover:bg-red-500 active:scale-[0.99] text-white font-semibold text-xs flex items-center justify-center gap-2 shadow-sm transition-all"
+              className="w-full py-3.5 px-4 rounded-2xl bg-gradient-to-r from-orange-500 via-amber-500 to-yellow-500 hover:opacity-95 active:scale-[0.99] text-white font-extrabold text-xs flex items-center justify-center gap-2 shadow-lg shadow-orange-500/25 transition-all"
             >
               <Send className="w-3.5 h-3.5" />
               <span>Log Health to Google Sheet</span>
@@ -613,9 +632,9 @@ export const MobileView: React.FC<MobileViewProps> = ({
         {activeTab === 'prayer' && (
           <form onSubmit={handleSubmitPrayer} className="space-y-4">
             
-            <div className="bg-white dark:bg-stone-900 p-3.5 rounded-2xl border border-stone-200 dark:border-stone-800 shadow-2xs space-y-3">
+            <div className="bg-[#13151f] p-4 rounded-2xl border border-stone-800 shadow-md space-y-3">
               <div>
-                <label className="block text-xs font-semibold text-stone-800 dark:text-stone-200 mb-1">
+                <label className="block text-xs font-bold text-stone-200 mb-1">
                   Prayer Focus / Intercession *
                 </label>
                 <textarea
@@ -624,13 +643,13 @@ export const MobileView: React.FC<MobileViewProps> = ({
                   placeholder="What are you bringing before God today? Intercession for loved ones, discernment, peace..."
                   value={prayerFocus}
                   onChange={(e) => setPrayerFocus(e.target.value)}
-                  className="w-full px-3 py-2 text-xs rounded-xl bg-stone-50 dark:bg-stone-800 border border-stone-200 dark:border-stone-700 focus:outline-none focus:ring-2 focus:ring-purple-500"
+                  className="w-full px-3 py-2 text-xs rounded-xl bg-stone-900 border border-stone-700 text-white focus:outline-none focus:ring-2 focus:ring-purple-500"
                 />
               </div>
 
               <div>
-                <label className="block text-xs font-semibold text-stone-800 dark:text-stone-200 mb-1 flex items-center gap-1.5">
-                  <BookOpen className="w-3.5 h-3.5 text-purple-600" />
+                <label className="block text-xs font-bold text-stone-200 mb-1 flex items-center gap-1.5">
+                  <BookOpen className="w-3.5 h-3.5 text-purple-400" />
                   Scripture / Verse of the Day
                 </label>
                 <input
@@ -638,19 +657,19 @@ export const MobileView: React.FC<MobileViewProps> = ({
                   placeholder="e.g. Psalm 23:1, Matthew 6:33"
                   value={scripture}
                   onChange={(e) => setScripture(e.target.value)}
-                  className="w-full px-3 py-2 text-xs rounded-xl bg-stone-50 dark:bg-stone-800 border border-stone-200 dark:border-stone-700 focus:outline-none focus:ring-2 focus:ring-purple-500"
+                  className="w-full px-3 py-2 text-xs rounded-xl bg-stone-900 border border-stone-700 text-white focus:outline-none focus:ring-2 focus:ring-purple-500"
                 />
               </div>
             </div>
 
             {/* Meditation / Contemplation Minutes */}
-            <div className="bg-white dark:bg-stone-900 p-3.5 rounded-2xl border border-stone-200 dark:border-stone-800 shadow-2xs space-y-2">
+            <div className="bg-[#13151f] p-4 rounded-2xl border border-stone-800 shadow-md space-y-2">
               <div className="flex items-center justify-between">
-                <span className="text-xs font-semibold text-stone-800 dark:text-stone-200 flex items-center gap-1.5">
-                  <Clock className="w-4 h-4 text-purple-600" />
+                <span className="text-xs font-bold text-white flex items-center gap-1.5">
+                  <Clock className="w-4 h-4 text-purple-400" />
                   Quiet Time / Meditation
                 </span>
-                <span className="text-xs font-bold text-purple-600 dark:text-purple-400">
+                <span className="text-xs font-extrabold text-purple-300">
                   {meditationMinutes} minutes
                 </span>
               </div>
@@ -660,10 +679,10 @@ export const MobileView: React.FC<MobileViewProps> = ({
                     key={mins}
                     type="button"
                     onClick={() => setMeditationMinutes(mins)}
-                    className={`py-2 text-xs font-semibold rounded-xl border transition-all ${
+                    className={`py-2 text-xs font-bold rounded-xl border transition-all ${
                       meditationMinutes === mins
-                        ? 'border-purple-600 bg-purple-50 dark:bg-purple-950/60 text-purple-800 dark:text-purple-200'
-                        : 'border-stone-200 dark:border-stone-800 bg-stone-50 dark:bg-stone-800 text-stone-600 dark:text-stone-400'
+                        ? 'border-purple-400 bg-purple-500/20 text-purple-300 shadow-sm'
+                        : 'border-stone-800 bg-stone-900 text-stone-400 hover:text-stone-200'
                     }`}
                   >
                     {mins}m
@@ -673,13 +692,13 @@ export const MobileView: React.FC<MobileViewProps> = ({
             </div>
 
             {/* Mark as Answered Prayer */}
-            <div className="bg-white dark:bg-stone-900 p-3.5 rounded-2xl border border-stone-200 dark:border-stone-800 shadow-2xs space-y-3">
+            <div className="bg-[#13151f] p-4 rounded-2xl border border-stone-800 shadow-md space-y-3">
               <label className="flex items-center justify-between cursor-pointer">
                 <div>
-                  <span className="text-xs font-semibold text-stone-800 dark:text-stone-200 block">
+                  <span className="text-xs font-bold text-white block">
                     Mark as Answered Prayer?
                   </span>
-                  <span className="text-[11px] text-stone-500">
+                  <span className="text-[11px] text-stone-400">
                     Celebrates answered prayers in your monthly report
                   </span>
                 </div>
@@ -692,8 +711,8 @@ export const MobileView: React.FC<MobileViewProps> = ({
               </label>
 
               {isAnswered && (
-                <div className="pt-2 border-t border-stone-100 dark:border-stone-800 animate-in fade-in">
-                  <label className="block text-[11px] font-medium text-stone-600 dark:text-stone-400 mb-1">
+                <div className="pt-2 border-t border-stone-800 animate-in fade-in">
+                  <label className="block text-[11px] font-medium text-stone-300 mb-1">
                     Testimony / How God Answered
                   </label>
                   <textarea
@@ -701,7 +720,7 @@ export const MobileView: React.FC<MobileViewProps> = ({
                     placeholder="Describe how this prayer was answered..."
                     value={answeredNote}
                     onChange={(e) => setAnsweredNote(e.target.value)}
-                    className="w-full px-3 py-2 text-xs rounded-xl bg-purple-50/50 dark:bg-purple-950/30 border border-purple-200 dark:border-purple-800"
+                    className="w-full px-3 py-2 text-xs rounded-xl bg-purple-950/30 border border-purple-500/30 text-white"
                   />
                 </div>
               )}
@@ -710,7 +729,7 @@ export const MobileView: React.FC<MobileViewProps> = ({
             <button
               type="submit"
               disabled={isSyncing || !prayerFocus.trim()}
-              className="w-full py-3 px-4 rounded-xl bg-purple-600 hover:bg-purple-500 disabled:opacity-50 active:scale-[0.99] text-white font-semibold text-xs flex items-center justify-center gap-2 shadow-sm transition-all"
+              className="w-full py-3.5 px-4 rounded-2xl bg-gradient-to-r from-emerald-500 via-teal-500 to-cyan-500 hover:opacity-95 disabled:opacity-50 active:scale-[0.99] text-white font-extrabold text-xs flex items-center justify-center gap-2 shadow-lg shadow-emerald-500/25 transition-all"
             >
               <Send className="w-3.5 h-3.5" />
               <span>Log Prayer to Google Sheet</span>
@@ -723,40 +742,42 @@ export const MobileView: React.FC<MobileViewProps> = ({
           <div className="space-y-3">
             <div className="flex items-center justify-between px-1">
               <div>
-                <h3 className="text-xs font-semibold text-stone-800 dark:text-stone-200">
+                <h3 className="text-xs font-bold text-white">
                   Today's Habit Checklist
                 </h3>
-                <span className="text-[11px] text-stone-500">
+                <span className="text-[11px] text-stone-400">
                   Tap to complete. Synced instantly to your Habit_Logs sheet.
                 </span>
               </div>
-              <span className="text-xs font-bold text-orange-600 dark:text-orange-400 bg-orange-50 dark:bg-orange-950/60 px-2 py-0.5 rounded-full border border-orange-200 dark:border-orange-800">
+              <span className="text-xs font-extrabold text-orange-300 bg-orange-500/20 px-2.5 py-0.5 rounded-full border border-orange-500/40">
                 {checkedHabits.length} / {config.habitsList.length} Done
               </span>
             </div>
 
-            <div className="space-y-2">
+            <div className="space-y-2.5">
               {config.habitsList.map((habit) => {
                 const isDone = checkedHabits.includes(habit.id);
                 return (
                   <div
                     key={habit.id}
                     onClick={() => handleToggleHabit(habit.id)}
-                    className={`p-3.5 rounded-2xl border transition-all cursor-pointer flex items-center justify-between gap-3 select-none ${
+                    className={`p-4 rounded-2xl border transition-all cursor-pointer flex items-center justify-between gap-3 select-none ${
                       isDone
-                        ? 'bg-emerald-50/70 dark:bg-emerald-950/30 border-emerald-300 dark:border-emerald-800 shadow-2xs'
-                        : 'bg-white dark:bg-stone-900 border-stone-200 dark:border-stone-800 hover:border-stone-300'
+                        ? 'bg-gradient-to-r from-emerald-950/40 via-teal-950/30 to-stone-900 border-emerald-500/40 shadow-md shadow-emerald-500/10'
+                        : 'bg-[#13151f] border-stone-800 hover:border-stone-700'
                     }`}
                   >
                     <div className="flex items-center gap-3 min-w-0">
-                      <div className={`w-6 h-6 rounded-lg flex items-center justify-center transition-colors ${
-                        isDone ? 'bg-emerald-600 text-white' : 'border border-stone-300 dark:border-stone-700 bg-stone-100 dark:bg-stone-800'
+                      <div className={`w-7 h-7 rounded-xl flex items-center justify-center transition-all ${
+                        isDone 
+                          ? 'bg-gradient-to-r from-emerald-500 to-teal-500 text-white shadow-md shadow-emerald-500/30' 
+                          : 'border border-stone-700 bg-stone-900'
                       }`}>
                         {isDone && <Check className="w-4 h-4 stroke-[3]" />}
                       </div>
                       <div className="truncate">
-                        <span className={`text-xs font-medium block truncate ${
-                          isDone ? 'line-through text-stone-500 dark:text-stone-400' : 'text-stone-900 dark:text-stone-100'
+                        <span className={`text-xs font-bold block truncate ${
+                          isDone ? 'line-through text-stone-400' : 'text-white'
                         }`}>
                           {habit.name}
                         </span>
@@ -766,9 +787,9 @@ export const MobileView: React.FC<MobileViewProps> = ({
                       </div>
                     </div>
 
-                    <div className="flex items-center gap-1 text-orange-600 dark:text-orange-400 shrink-0 font-semibold text-xs">
-                      <Flame className="w-3.5 h-3.5 fill-orange-500" />
-                      <span>{isDone ? habit.streak + 1 : habit.streak}d</span>
+                    <div className="flex items-center gap-1.5 text-pink-400 shrink-0 font-extrabold text-xs">
+                      <Flame className="w-4 h-4 fill-pink-400 text-pink-400" />
+                      <span>{isDone ? habit.streak + 1 : habit.streak} day streak</span>
                     </div>
                   </div>
                 );
