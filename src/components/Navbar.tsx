@@ -11,6 +11,7 @@ import {
   RefreshCw,
   Sparkles
 } from 'lucide-react';
+import { SquirrelIcon } from './SquirrelIcon';
 import { AppConfig, SyncStatus } from '../types';
 
 export type AppViewMode = 'schema-editor' | 'mobile-app' | 'reports';
@@ -48,8 +49,8 @@ export const Navbar: React.FC<NavbarProps> = ({
         
         {/* Brand & Spreadsheet badge */}
         <div className="flex items-center gap-3">
-          <div className="w-9 h-9 rounded-xl rainbow-bg flex items-center justify-center text-white shadow-md shadow-rose-500/20 shrink-0">
-            <Sparkles className="w-5 h-5 text-white" />
+          <div className="w-10 h-10 rounded-2xl overflow-hidden shadow-md shadow-rose-500/25 shrink-0 transition-transform duration-200 hover:scale-105">
+            <SquirrelIcon className="w-full h-full object-cover" />
           </div>
           <div>
             <div className="flex items-center gap-2">

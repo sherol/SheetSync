@@ -24,6 +24,7 @@ import {
   PrayerLogEntry, 
   CustomField 
 } from '../types';
+import { SquirrelIcon } from './SquirrelIcon';
 
 interface MobileViewProps {
   config: AppConfig;
@@ -187,6 +188,9 @@ export const MobileView: React.FC<MobileViewProps> = ({
       <div className="sticky top-0 z-20 bg-[#10121a]/95 backdrop-blur-md border-b border-stone-800 px-4 py-3 shrink-0">
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-2">
+            <div className="w-7 h-7 rounded-xl overflow-hidden shadow-xs shrink-0">
+              <SquirrelIcon className="w-full h-full object-cover" />
+            </div>
             <span className="font-extrabold text-sm tracking-tight rainbow-text">
               SheetSync
             </span>
